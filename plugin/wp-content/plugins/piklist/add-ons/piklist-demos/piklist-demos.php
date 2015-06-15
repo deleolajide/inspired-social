@@ -19,7 +19,7 @@ Author URI: http://piklist.com/
     $post_types['piklist_demo'] = array(
       'labels' => piklist('post_type_labels', 'Piklist Demos')
       ,'title' => __('Enter a new Demo Title')
-      ,'menu_icon' => piklist_admin::responsive_admin() == true ? plugins_url('piklist/parts/img/piklist-icon.svg') : plugins_url('piklist/parts/img/piklist-icon.png') 
+      ,'menu_icon' => piklist_admin::responsive_admin() == true ? plugins_url('piklist/parts/img/piklist-menu-icon.svg') : plugins_url('piklist/parts/img/piklist-icon.png') 
       ,'page_icon' => plugins_url('piklist/parts/img/piklist-page-icon-32.png')
       ,'supports' => array(
         'title'
@@ -43,7 +43,6 @@ Author URI: http://piklist.com/
         'slug'
         ,'author'
       )
-      ,'post_states' => true
       ,'status' => array(
         'draft' => array(
           'label' => 'New'
@@ -52,11 +51,36 @@ Author URI: http://piklist.com/
         ,'demo' => array(
           'label' => 'Demo'
           ,'public' => true
-        )
+          ,'exclude_from_search' => true
+          ,'show_in_admin_all_list' => true
+          ,'show_in_admin_status_list' => true
+       )
         ,'lock' => array(
           'label' => 'Lock'
           ,'public' => true
         )
+      )
+    );
+    
+    $post_types['piklist_lite_demo'] = array(
+      'labels' => piklist('post_type_labels', 'Lite Demo')
+      ,'title' => __('Enter a new Demo Title')
+      ,'menu_icon' => piklist_admin::responsive_admin() == true ? plugins_url('piklist/parts/img/piklist-menu-icon.svg') : plugins_url('piklist/parts/img/piklist-menu-icon.png')
+      ,'page_icon' => plugins_url('piklist/parts/img/piklist-page-icon-32.png')
+      ,'show_in_menu' => 'edit.php?post_type=piklist_demo'
+      ,'supports' => array(
+        'title'
+        ,'revisions'
+      )
+      ,'public' => true
+      ,'has_archive' => true
+      ,'capability_type' => 'post'
+      ,'edit_columns' => array(
+        'title' => __('Title')
+      )
+      ,'hide_meta_box' => array(
+        'slug'
+        ,'author'
       )
     );
     
@@ -109,7 +133,7 @@ Author URI: http://piklist.com/
   {
     $pages[] = array(
       'page_title' => __('Demo Settings')
-      ,'menu_title' => __('Demo Settings', 'piklist')
+      ,'menu_title' => __('Demo Settings', 'piklist-demo')
       ,'sub_menu' => 'edit.php?post_type=piklist_demo'
       ,'capability' => 'manage_options'
       ,'menu_slug' => 'piklist_demo_fields'
@@ -128,28 +152,35 @@ Author URI: http://piklist.com/
   add_filter('piklist_field_templates', 'piklist_demo_field_templates');
   function piklist_demo_field_templates($templates)
   {
-    $templates['piklist_demo'] = '[field_wrapper]
-                                    <div id="%1$s" class="%2$s">
-                                      [field_label]
-                                      [field]
-                                      [field_description_wrapper]
-                                        <small>[field_description]</small>
-                                      [/field_description_wrapper]
-                                    </div>
-                                  [/field_wrapper]';
-
-
-    $templates['theme_tight'] = '[field_wrapper]
-                                   <div id="%1$s" class="%2$s piklist-field-container">
-                                     [field_label]
-                                     <div class="piklist-field">
-                                       [field]
-                                       [field_description_wrapper]
-                                         <span class="piklist-field-description">[field_description]</span>
-                                       [/field_description_wrapper]
-                                     </div>
-                                   </div>
-                                 [/field_wrapper]';
+    $templates['piklist_demo'] = array(
+                                'name' => __('User', 'piklist')
+                                ,'description' => __('Default layout for User fields from Piklist Demos.', 'piklist')
+                                ,'template' => '[field_wrapper]
+                                                  <div id="%1$s" class="%2$s">
+                                                    [field_label]
+                                                    [field]
+                                                    [field_description_wrapper]
+                                                      <small>[field_description]</small>
+                                                    [/field_description_wrapper]
+                                                  </div>
+                                                [/field_wrapper]'
+                              );
+                                    
+    $templates['theme_tight'] = array(
+                                  'name' => __('Theme - Tight', 'piklist')
+                                  ,'description' => __('A front end form wrapper example from Piklist Demos.', 'piklist')
+                                  ,'template' => '[field_wrapper]
+                                                    <div id="%1$s" class="%2$s piklist-field-container">
+                                                      [field_label]
+                                                      <div class="piklist-field">
+                                                        [field]
+                                                        [field_description_wrapper]
+                                                          <span class="piklist-field-description">[field_description]</span>
+                                                        [/field_description_wrapper]
+                                                      </div>
+                                                    </div>
+                                                  [/field_wrapper]'
+                                );
 
     return $templates;
   }

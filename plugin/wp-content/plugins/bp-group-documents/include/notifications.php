@@ -48,7 +48,8 @@ add_action( 'groups_screen_notification_settings' , 'bp_group_documents_screen_n
  * @version 2, include @jreeve fix http://wordpress.org/support/topic/document-upload-notification?replies=6#post-5464069
  */
 function bp_group_documents_email_notification( $document ) {
-    global $bp ;
+    $bp = buddypress();
+    ;
 
     $user_name = bp_core_get_userlink( $bp->loggedin_user->id , true ) ;
     $user_profile_link = bp_core_get_userlink( $bp->loggedin_user->id , false , true ) ;

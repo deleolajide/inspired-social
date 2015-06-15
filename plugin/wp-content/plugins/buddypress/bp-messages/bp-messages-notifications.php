@@ -8,15 +8,22 @@
  */
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 /** Email *********************************************************************/
 
 /**
- * Email message recipients to alert them of a new unread private message
+ * Email message recipients to alert them of a new unread private message.
  *
- * @since BuddyPress (1.0)
- * @param array $raw_args
+ * @since BuddyPress (1.0.0)
+ *
+ * @param array|BP_Messages_Message $raw_args {
+ *     Array of arguments. Also accepts a BP_Messages_Message object.
+ *     @type array  $recipients    User IDs of recipients.
+ *     @type string $email_subject Subject line of message.
+ *     @type string $email_content Content of message.
+ *     @type int    $sender_id     User ID of sender.
+ * }
  */
 function messages_notification_new_message( $raw_args = array() ) {
 
@@ -82,18 +89,59 @@ To view and read your messages please log in and visit: %4$s
 
 			// Only show the disable notifications line if the settings component is enabled
 			if ( bp_is_active( 'settings' ) ) {
-				$email_content .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress' ), $settings_link );
+				$email_content .= sprintf( __( 'To disable these notifications, please log in and go to: %s', 'buddypress' ), $settings_link );
 			}
 
-			// Send the message
-			$email_to      = apply_filters( 'messages_notification_new_message_to',      $email_to );
-			$email_subject = apply_filters( 'messages_notification_new_message_subject', $email_subject, $sender_name );
-			$email_content = apply_filters( 'messages_notification_new_message_message', $email_content, $sender_name, $subject, $content, $message_link, $settings_link );
+			/**
+			 * Filters the user email that the message notification will be sent to.
+			 *
+			 * @since BuddyPress (1.2.0)
+			 *
+			 * @param string  $email_to User email the notification is being sent to.
+			 * @param WP_User $ud       WP_User object of who is receiving the message.
+			 */
+			$email_to      = apply_filters( 'messages_notification_new_message_to',      $email_to, $ud );
+
+			/**
+			 * Filters the message notification subject that will be sent to user.
+			 *
+			 * @since BuddyPress (1.2.0)
+			 *
+			 * @param string  $email_subject Email notification subject text.
+			 * @param string  $sender_name   Name of the person who sent the message.
+			 * @param WP_User $ud            WP_User object of who is receiving the message.
+			 */
+			$email_subject = apply_filters( 'messages_notification_new_message_subject', $email_subject, $sender_name, $ud );
+
+			/**
+			 * Filters the message notification message that will be sent to user.
+			 *
+			 * @since BuddyPress (1.2.0)
+			 *
+			 * @param string  $email_content Email notification message text.
+			 * @param string  $sender_name   Name of the person who sent the message.
+			 * @param string  $subject       Email notification subject text.
+			 * @param string  $content       Content of the message.
+			 * @param string  $message_link  URL permalink for the message.
+			 * @param string  $settings_link URL permalink for the user's notification settings area.
+			 * @param WP_User $ud            WP_User object of who is receiving the message.
+			 */
+			$email_content = apply_filters( 'messages_notification_new_message_message', $email_content, $sender_name, $subject, $content, $message_link, $settings_link, $ud );
 
 			wp_mail( $email_to, $email_subject, $email_content );
 		}
 	}
 
+	/**
+	 * Fires after the sending of a new message email notification.
+	 *
+	 * @since BuddyPress (1.5.0)
+	 *
+	 * @param array  $recipients    User IDs of recipients.
+	 * @param string $email_subject Email notification subject text.
+	 * @param string $email_content Email notification message text.
+	 * @param array  $$args         Array of originally provided arguments.
+	 */
 	do_action( 'bp_messages_sent_notification_email', $recipients, $email_subject, $email_content, $args );
 }
 add_action( 'messages_message_sent', 'messages_notification_new_message', 10 );
@@ -101,59 +149,98 @@ add_action( 'messages_message_sent', 'messages_notification_new_message', 10 );
 /** Notifications *************************************************************/
 
 /**
- * Format the BuddyBar/Toolbar notifications for the Messages component
+ * Format notifications for the Messages component.
  *
- * @since BuddyPress (1.0)
- * @param string $action The kind of notification being rendered
- * @param int $item_id The primary item id
- * @param int $secondary_item_id The secondary item id
- * @param int $total_items The total number of messaging-related notifications waiting for the user
- * @param string $format 'string' for BuddyBar-compatible notifications; 'array' for WP Toolbar
+ * @since BuddyPress (1.0.0)
+ *
+ * @param string $action            The kind of notification being rendered.
+ * @param int    $item_id           The primary item id.
+ * @param int    $secondary_item_id The secondary item id.
+ * @param int    $total_items       The total number of messaging-related notifications
+ *                                  waiting for the user.
+ * @param string $format            Return value format. 'string' for BuddyBar-compatible
+ *                                  notifications; 'array' for WP Toolbar. Default: 'string'.
+ *
+ * @return string|array Formatted notifications.
  */
 function messages_format_notifications( $action, $item_id, $secondary_item_id, $total_items, $format = 'string' ) {
+	$total_items = (int) $total_items;
+	$link        = trailingslashit( bp_loggedin_user_domain() . bp_get_messages_slug() . '/inbox' );
+	$title       = __( 'Inbox', 'buddypress' );
+	$amount      = 'single';
 
 	if ( 'new_message' === $action ) {
-		$link  = trailingslashit( bp_loggedin_user_domain() . bp_get_messages_slug() . '/inbox' );
-		$title = __( 'Inbox', 'buddypress' );
-
-		if ( (int) $total_items > 1 ) {
-			$text   = sprintf( __('You have %d new messages', 'buddypress' ), (int) $total_items );
-			$filter = 'bp_messages_multiple_new_message_notification';
+		if ( $total_items > 1 ) {
+			$amount = 'multiple';
+			$text   = sprintf( __( 'You have %d new messages', 'buddypress' ), $total_items );
 		} else {
+			$amount = 'single';
+
 			// get message thread ID
 			$message   = new BP_Messages_Message( $item_id );
 			$thread_id = $message->thread_id;
-
-			$link = bp_get_message_thread_view_link( $thread_id );
+			$link      = ( ! empty( $thread_id ) )
+				? bp_get_message_thread_view_link( $thread_id )
+				: false;
 
 			if ( ! empty( $secondary_item_id ) ) {
 				$text = sprintf( __( '%s sent you a new private message', 'buddypress' ), bp_core_get_user_displayname( $secondary_item_id ) );
 			} else {
-				$text = sprintf( __( 'You have %d new private messages', 'buddypress' ), (int) $total_items );
+				$text = sprintf( _n( 'You have %s new private message', 'You have %s new private messages', $total_items, 'buddypress' ), bp_core_number_format( $total_items ) );
 			}
-			$filter = 'bp_messages_single_new_message_notification';
 		}
 	}
 
 	if ( 'string' === $format ) {
-		$return = apply_filters( $filter, '<a href="' . esc_url( $link ) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>', (int) $total_items, $text, $link, $item_id, $secondary_item_id );
+		if ( ! empty( $link ) ) {
+			$retval = '<a href="' . esc_url( $link ) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>';
+		} else {
+			$retval = esc_html( $text );
+		}
+
+		/**
+		 * Filters the new message notification text before the notification is created.
+		 *
+		 * This is a dynamic filter. Possible filter names are:
+		 *   - 'bp_messages_multiple_new_message_notification'.
+		 *   - 'bp_messages_single_new_message_notification'.
+		 *
+		 * @param string $retval            Notification text.
+		 * @param int    $total_items       Number of messages referred to by the notification.
+		 * @param string $text              The raw notification test (ie, not wrapped in a link).
+		 * @param int    $item_id           ID of the associated item.
+		 * @param int    $secondary_item_id ID of the secondary associated item.
+		 */
+		$return = apply_filters( 'bp_messages_' . $amount . '_new_message_notification', $retval, (int) $total_items, $text, $link, $item_id, $secondary_item_id );
 	} else {
-		$return = apply_filters( $filter, array(
+		/** This filter is documented in bp-messages/bp-messages-notifications.php */
+		$return = apply_filters( 'bp_messages_' . $amount . '_new_message_notification', array(
 			'text' => $text,
 			'link' => $link
 		), $link, (int) $total_items, $text, $link, $item_id, $secondary_item_id );
 	}
 
+	/**
+	 * Fires right before returning the formatted message notifications.
+	 *
+	 * @since BuddyPress (1.0.0)
+	 *
+	 * @param string $action            The type of message notification.
+	 * @param int    $item_id           The primary item ID.
+	 * @param int    $secondary_item_id The secondary item ID.
+	 * @param int    $total_items       Total amount of items to format.
+	 */
 	do_action( 'messages_format_notifications', $action, $item_id, $secondary_item_id, $total_items );
 
 	return $return;
 }
 
 /**
- * Send notifications to message recipients
+ * Send notifications to message recipients.
  *
  * @since BuddyPress (1.9.0)
- * @param obj $message
+ *
+ * @param BP_Messages_Message $message Message object.
  */
 function bp_messages_message_sent_add_notification( $message ) {
 	if ( bp_is_active( 'notifications' ) && ! empty( $message->recipients ) ) {
@@ -211,11 +298,20 @@ add_action( 'thread_loop_start', 'bp_messages_screen_conversation_mark_notificat
  *
  * @since BuddyPress (2.0.0)
  *
- * @param int $message_id ID of the message.
+ * @param int   $thread_id   ID of the thread.
+ * @param array $message_ids IDs of the messages.
  */
-function bp_messages_message_delete_notifications( $message_id = 0 ) {
-	if ( bp_is_active( 'notifications' ) && ! empty( $message_id ) ) {
-		bp_notifications_delete_notifications_by_item_id( bp_loggedin_user_id(), (int) $message_id, buddypress()->messages->id, 'new_message' );
+function bp_messages_message_delete_notifications( $thread_id, $message_ids ) {
+	if ( ! bp_is_active( 'notifications' ) ) {
+		return;
+	}
+
+	// For each recipient, delete notifications corresponding to each message.
+	$thread = new BP_Messages_Thread( $thread_id );
+	foreach ( $thread->get_recipients() as $recipient ) {
+		foreach ( $message_ids as $message_id ) {
+			bp_notifications_delete_notifications_by_item_id( $recipient->user_id, (int) $message_id, buddypress()->messages->id, 'new_message' );
+		}
 	}
 }
-add_action( 'messages_thread_deleted_thread', 'bp_messages_message_delete_notifications', 10, 1 );
+add_action( 'bp_messages_thread_after_delete', 'bp_messages_message_delete_notifications', 10, 2 );

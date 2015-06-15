@@ -12,15 +12,27 @@
  */
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Catch and process the My Friends page.
  */
 function friends_screen_my_friends() {
 
+	/**
+	 * Fires before the loading of template for the My Friends page.
+	 *
+	 * @since BuddyPress (1.0.0)
+	 */
 	do_action( 'friends_screen_my_friends' );
 
+	/**
+	 * Filters the template used to display the My Friends page.
+	 *
+	 * @since BuddyPress (1.0.0)
+	 *
+	 * @param string $template Path to the my friends template to load.
+	 */
 	bp_core_load_template( apply_filters( 'friends_template_my_friends', 'members/single/home' ) );
 }
 
@@ -62,8 +74,20 @@ function friends_screen_requests() {
 		bp_core_redirect( trailingslashit( bp_loggedin_user_domain() . bp_current_component() . '/' . bp_current_action() ) );
 	}
 
+	/**
+	 * Fires before the loading of template for the friends requests page.
+	 *
+	 * @since BuddyPress (1.0.0)
+	 */
 	do_action( 'friends_screen_requests' );
 
+	/**
+	 * Filters the template used to display the My Friends page.
+	 *
+	 * @since BuddyPress (1.0.0)
+	 *
+	 * @param string $template Path to the friends request template to load.
+	 */
 	bp_core_load_template( apply_filters( 'friends_template_requests', 'members/single/home' ) );
 }
 
@@ -82,7 +106,7 @@ function friends_screen_notification_settings() {
 		<thead>
 			<tr>
 				<th class="icon"></th>
-				<th class="title"><?php _e( 'Friends', 'buddypress' ) ?></th>
+				<th class="title"><?php _ex( 'Friends', 'Friend settings on notification settings page', 'buddypress' ) ?></th>
 				<th class="yes"><?php _e( 'Yes', 'buddypress' ) ?></th>
 				<th class="no"><?php _e( 'No', 'buddypress' )?></th>
 			</tr>
@@ -91,18 +115,25 @@ function friends_screen_notification_settings() {
 		<tbody>
 			<tr id="friends-notification-settings-request">
 				<td></td>
-				<td><?php _e( 'A member sends you a friendship request', 'buddypress' ) ?></td>
+				<td><?php _ex( 'A member sends you a friendship request', 'Friend settings on notification settings page', 'buddypress' ) ?></td>
 				<td class="yes"><input type="radio" name="notifications[notification_friends_friendship_request]" value="yes" <?php checked( $send_requests, 'yes', true ) ?>/></td>
 				<td class="no"><input type="radio" name="notifications[notification_friends_friendship_request]" value="no" <?php checked( $send_requests, 'no', true ) ?>/></td>
 			</tr>
 			<tr id="friends-notification-settings-accepted">
 				<td></td>
-				<td><?php _e( 'A member accepts your friendship request', 'buddypress' ) ?></td>
+				<td><?php _ex( 'A member accepts your friendship request', 'Friend settings on notification settings page', 'buddypress' ) ?></td>
 				<td class="yes"><input type="radio" name="notifications[notification_friends_friendship_accepted]" value="yes" <?php checked( $accept_requests, 'yes', true ) ?>/></td>
 				<td class="no"><input type="radio" name="notifications[notification_friends_friendship_accepted]" value="no" <?php checked( $accept_requests, 'no', true ) ?>/></td>
 			</tr>
 
-			<?php do_action( 'friends_screen_notification_settings' ); ?>
+			<?php
+
+			/**
+			 * Fires after the last table row on the friends notification screen.
+			 *
+			 * @since BuddyPress (1.0.0)
+			 */
+			do_action( 'friends_screen_notification_settings' ); ?>
 
 		</tbody>
 	</table>

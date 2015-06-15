@@ -68,12 +68,10 @@ div#icon-buddypress-media { background: url('../img/bpm-icon-32.png'); backgroun
 #bpm-unsubscribe-dialog p { margin: 10px; }
 
 table.bp-media-encoding-table td, table.bp-media-encoding-table th {
-	border-left-color: #fff;
-	border-right-color: #dfdfdf;
 	border-width: 1px;
 	vertical-align: middle;
 	text-align: center;
-	font-family: sans-serif;
+    border: 1px solid #CCC;
 }
 table.bp-media-encoding-table th {
 	font-weight: bold;
@@ -113,7 +111,9 @@ a.toplevel_page_bp-media-settings div.wp-menu-image{
 .coming-soon.coming-soon-r:hover{background-position: 175px 0;}
 
 .bp-media-addon .product_footer{margin: 20px 0 0;overflow: hidden;}
-.bp-media-addon .add_to_cart_button{background: #C45200; color: #FFFFFF;display: inline-block;font-size: 18px;font-weight: bold; line-height: 1.4em; margin: 0 20px; padding: 4px 15px;text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6)}
+.bp-media-addon .add_to_cart_button, .bp-media-addon .rtm-addon-purchased{color: #FFFFFF;display: inline-block;font-size: 18px;font-weight: bold; line-height: 1.4em; margin: 0 20px; padding: 4px 15px;text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6)}
+.bp-media-addon .add_to_cart_button{background: #C45200; }
+.bp-media-addon .rtm-addon-purchased{background: #2EA2CC; `}
 .bp-media-addon .product_footer .product_demo_link{font-size: 16px;margin: 8px 20px; font-weight: bold}
 
 .bp-media-addon .add_to_cart_button:hover{background: none repeat scroll 0 0 #D75A00;
@@ -779,4 +779,38 @@ div.bp-media-metabox-holder #branding #mce-responses {
 }
 .bp-media-settings-boxes-container .bp-media-metabox-holder {
     padding-right: 0;
+}
+.rtm-addon-license{
+    background: #FFF;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.rtm-addon-license .large-12.rtm-addon-license-status {
+    font-size: 15px;
+    padding: 10px 0;
+    background: none repeat scroll 0 0 #f5f5f5;
+    border: 1px solid #eee;
+}.rtm-addon-license .rtm-addon-license-status .rtm-addon-license-status-label{
+    font-weight: bold;
+    color: #222;
+}
+.rtm-addon-license .rtm-addon-status-activated {
+    color: #7ad03a;
+}
+.rtm-addon-license .rtm-addon-status-deactivated {
+    color: #dd3d36;
+}
+.rtm-addon-license form h3{
+    font-size: 14px;
+    border-bottom: 1px dotted #DDD;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+.rtm-addon-license table th{
+    width: 35%;
+    font-weight: normal;
+    font-size: 13px;
+}
+.rtm-addon-license table td img{
+    margin-left: 10px;
 }

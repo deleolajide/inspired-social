@@ -1,25 +1,29 @@
 === WordPress Helpers ===
 Contributors: piklist, p51labs, sbruner
 Tags: piklist, settings, admin bar, dashboard widgets, widgets, visual editor, html editor, excerpts, excerpt length, autosave, howdy, private, protected, close comments, auto linking, AIM, Yahoo IM, Jabber, Google Talk, rss feeds, feeds, maintenance, maintenance mode, under construction
-Tested up to: 3.9
-Requires at least: 3.4
-Stable tag: 1.5.4
+Tested up to: 4.2
+Requires at least: 3.6
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The missing settings page for WordPress.
+Take control of WordPress. Adds over 50 more settings to your admin.
 
 == Description ==
 
-WordPress Helpers opens up the missing settings you wish were in WordPress.
+Take control of WordPress. Adds over 50 more settings to your admin.
 
-**This plugin requires <a href="http://wordpress.org/extend/plugins/piklist/">Piklist</a>.**
+> #### Read The Reviews
+> <a href="http://wpmu.org/wordpress-helpers-the-missing-settings-page-for-wordpress/">WPMU.org</a><br>
+> <a href="https://managewp.com/wordpress-settings-wordpress-helpers/"/>ManageWP.com</a>
+
 
 [Watch the WordPress Helpers Demo](http://www.youtube.com/watch?v=ZYSUDvodWxI&hd=1):
 
 http://www.youtube.com/watch?v=ZYSUDvodWxI&hd=1
 
 = With WordPress Helpers you can easily: =
+* Customize your login screen logo and background color.
 * Take control of the WordPress Admin Bar... including "Howdy".
 * Show ID's on edit screens for Posts, Pages, Categories, Tags, Users, Media, Custom Post Types and Custom Taxonomies.
 * Expose the hidden WordPress settings page.
@@ -33,6 +37,7 @@ http://www.youtube.com/watch?v=ZYSUDvodWxI&hd=1
 
 = Writing =
 * Set the default Post editor (Visual or HTML).
+* Enable WYSIWYG for excerpts box.
 * Set Post Editor columns.
 * Totally disable the Visual Editor.
 * Increase the height of the Excerpt box when writing a Post.
@@ -73,11 +78,9 @@ http://www.youtube.com/watch?v=ZYSUDvodWxI&hd=1
 * Display an notice to your users in the admin or on the front of your site.
 
 
-= Read The Reviews =
-* <a href="http://wpmu.org/wordpress-helpers-the-missing-settings-page-for-wordpress/">WPMU.org</a>
-* <a href="https://managewp.com/wordpress-settings-wordpress-helpers/"/>ManageWP.com</a>
-
-
+> #### Powered by Piklist
+> WordPress Helpers requires the Piklist framework.   
+> <a href="http://wordpress.org/extend/plugins/piklist/">You can download and install Piklist for free.</a>
 
 == Frequently Asked Questions ==
 
@@ -98,6 +101,43 @@ Awesome! We're always looking for new ideas. Please submit them on our <a href="
 * Install and activate WordPress Helpers like any other plugin.
 
 == Changelog ==
+
+= 1.7.0 =
+* NEW: Add Featured Image to List Tables.
+* ENHANCEMENT: Add more room for longer object ID's in list tables.
+* FIX: Remove Dashboard Widgets works as expected.
+
+= 1.6.3 =
+* NEW: Enable WYSIWYG for excerpts (Writing)
+
+= 1.6.2 =
+* NEW: Schedule WordPress to delete orphaned meta.
+
+= 1.6.1 =
+* FIXED: Update script.
+* FIXED: Typo.
+* Removed default avatar option.
+
+= 1.6.0 =
+* ENHANCED: Upgraded Piklist Checker to 0.6.0
+
+= 1.5.9 =
+* NEW: Customize your login screen logo and background color. 
+* ENHANCED: Better UI for Users > Visitors settings.
+
+= 1.5.8 =
+* FIXED: Notice when a user cannot manage_options and the All Options setting is set.
+
+= 1.5.7 =
+* FIXED: Widgets and Dashboard Widgets works properly. You may need to resave them.
+* Removed deprecated "dashboard_secondary".
+
+= 1.5.6 =
+* FIXED: Checkboxes work as expected.
+* FIXED: Tabs in correct order.
+
+= 1.5.5 =
+* Better compatiblity with Piklist 0.9.4
 
 = 1.5.4 =
 * ENHANCED: updated to Piklist Checker 0.5.0

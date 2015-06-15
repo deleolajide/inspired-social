@@ -24,6 +24,23 @@ Collapse: true
   
   piklist('field', array(
     'type' => 'radio'
+    ,'field' => 'radio_add_more'
+    ,'label' => 'Normal Add More'
+    ,'add_more' => true
+    ,'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    ,'value' => 'third'
+    ,'choices' => array(
+      'first' => 'First Choice'
+      ,'second' => 'Second Choice'
+      ,'third' => 'Third Choice'
+    )
+    ,'on_post_status' => array(
+      'value' => 'lock'
+    )
+  ));
+  
+  piklist('field', array(
+    'type' => 'radio'
     ,'field' => 'radio_inline'
     ,'label' => 'Single Line'
     ,'value' => 'no'

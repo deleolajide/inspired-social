@@ -8,7 +8,7 @@ Order: 510
 
   piklist('field', array(
     'type' => 'group'
-    ,'field' => 'remove_widgets'
+    ,'field' => 'remove_widgets_new'
     ,'label' => 'Remove Widgets'
     ,'fields' => array(
       array(
@@ -22,14 +22,7 @@ Order: 510
           ,'WP_Nav_Menu_Widget' => 'Menu'
           ,'WP_Widget_Meta' => 'Meta'
           ,'WP_Widget_Pages' => 'Page'
-        )
-        ,'columns' => 4
-      )
-      ,array(
-        'type' => 'checkbox'
-        ,'field' => 'widgets'
-        ,'choices' => array(
-          'WP_Widget_Recent_Comments' => 'Recent Coments'
+          ,'WP_Widget_Recent_Comments' => 'Recent Comments'
           ,'WP_Widget_Recent_Posts' => 'Recent Posts'
           ,'WP_Widget_RSS' => 'RSS'
           ,'WP_Widget_Search' => 'Search'
@@ -49,5 +42,3 @@ Order: 510
       'true' => 'Run any shortcode in a widget'
     )
   ));
-
-?>

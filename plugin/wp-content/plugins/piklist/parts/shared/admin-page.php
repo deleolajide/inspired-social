@@ -94,12 +94,18 @@
   <?php if (isset($setting) && !empty($setting)): ?>
 
     <?php if ($save): ?>
+      
+      <?php if ($notice): ?>
   
-      <?php settings_errors(); ?>
-    
+        <?php settings_errors(); ?>
+      
+      <?php endif; ?>
+      
       <form action="<?php echo admin_url('options.php'); ?>" method="post" enctype="multipart/form-data">
 
         <?php settings_fields($setting); ?>
+
+        <?php do_action('piklist_pre_render_settings_form'); ?>
 
     <?php endif; ?>
 
@@ -107,7 +113,9 @@
 
     <?php if ($save): ?>
     
-      <?php do_action('piklist_settings_form'); ?>
+        <?php do_action('piklist_post_render_settings_form'); ?>
+        
+        <?php do_action('piklist_settings_form'); ?>
        
         <?php submit_button(esc_html($save_text)); ?>
          

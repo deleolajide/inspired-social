@@ -4,6 +4,6 @@
     <name>Inspired Social</name>
     <description>Inspired Social Plugin for Openfire</description>
     <author>Dele Olajide</author>
-    <version>0.0.2.9</version>
-    <minServerVersion>3.9.3</minServerVersion>     
+    <version>0.4.0</version>
+    <minServerVersion>3.9.9</minServerVersion>     
 </plugin>

@@ -9,15 +9,6 @@ global $wp_version;
   
   piklist('field', array(
     'type' => 'checkbox'
-    ,'field' => 'show_ids'
-    ,'label' => 'Show ID\'s'
-    ,'choices' => array(
-      'true' => 'Show ID\'s on edit screens for Posts, Pages, Users, etc.'
-    )
-  ));
-
-  piklist('field', array(
-    'type' => 'checkbox'
     ,'field' => 'all_options'
     ,'label' => 'Show ALL Options'
     ,'choices' => array(
@@ -73,6 +64,3 @@ global $wp_version;
     ));
 
   }
-
-
-?>

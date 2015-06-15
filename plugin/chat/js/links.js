@@ -17,8 +17,8 @@ function applyLinks(string, mode, style) {
 	var style, target;
 	var prompt = "click to open screen share";	
 
-	console.log("applyLinks");
-	console.log(string);
+	//console.log("applyLinks");
+	//console.log(string);
 	
 	// Links style
 	if(!style)

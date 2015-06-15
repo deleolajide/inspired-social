@@ -8,7 +8,7 @@
  */
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Output the notifications component slug.
@@ -26,6 +26,14 @@ function bp_notifications_slug() {
 	 * @return string Slug of the Notifications component.
 	 */
 	function bp_get_notifications_slug() {
+
+		/**
+		 * Filters the notifications component slug.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $slug Notifications component slug.
+		 */
 		return apply_filters( 'bp_get_notifications_slug', buddypress()->notifications->slug );
 	}
 
@@ -42,10 +50,18 @@ function bp_notifications_permalink() {
 	 *
 	 * @since BuddyPress (1.9.0)
 	 *
-	 * @return string Notifications permalink
+	 * @return string Notifications permalink.
 	 */
 	function bp_get_notifications_permalink() {
 		$retval = trailingslashit( bp_loggedin_user_domain() . bp_get_notifications_slug() );
+
+		/**
+		 * Filters the notifications permalink.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval Permalink for the notifications.
+		 */
 		return apply_filters( 'bp_get_notifications_permalink', $retval );
 	}
 
@@ -62,10 +78,18 @@ function bp_notifications_unread_permalink() {
 	 *
 	 * @since BuddyPress (1.9.0)
 	 *
-	 * @return string Unread notifications permalink
+	 * @return string Unread notifications permalink.
 	 */
 	function bp_get_notifications_unread_permalink() {
 		$retval = trailingslashit( bp_loggedin_user_domain() . bp_get_notifications_slug() . '/unread' );
+
+		/**
+		 * Filters the unread notifications permalink.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval Permalink for the unread notifications.
+		 */
 		return apply_filters( 'bp_get_notifications_unread_permalink', $retval );
 	}
 
@@ -82,10 +106,18 @@ function bp_notifications_read_permalink() {
 	 *
 	 * @since BuddyPress (1.9.0)
 	 *
-	 * @return string Read notifications permalink
+	 * @return string Read notifications permalink.
 	 */
 	function bp_get_notifications_read_permalink() {
 		$retval = trailingslashit( bp_loggedin_user_domain() . bp_get_notifications_slug() . '/read' );
+
+		/**
+		 * Filters the read notifications permalink.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval Permalink for the read notifications.
+		 */
 		return apply_filters( 'bp_get_notifications_unread_permalink', $retval );
 	}
 
@@ -173,6 +205,15 @@ class BP_Notifications_Template {
 	public $pag_page;
 
 	/**
+	 * The $_GET argument used in URLs for determining pagination
+	 *
+	 * @since BuddyPress (1.9.0)
+	 * @access public
+	 * @var int
+	 */
+	public $pag_arg;
+
+	/**
 	 * The number of items to display per page of results.
 	 *
 	 * @since BuddyPress (1.9.0)
@@ -218,100 +259,97 @@ class BP_Notifications_Template {
 	public $sort_order;
 
 	/**
+	 * Array of variables used in this notification query
+	 *
+	 * @since BuddyPress (2.2.2)
+	 * @var array
+	 */
+	public $query_vars;
+
+	/**
 	 * Constructor method.
+	 *
+	 * @see bp_has_notifications() For information on the array format.
 	 *
 	 * @since BuddyPress (1.9.0)
 	 *
 	 * @param array $args {
-	 *     @type int $user_id ID of the user to whom the displayed
-	 *           notifications belong.
-	 *     @type bool $is_new Whether to limit the query to unread
-	 *           notifications. Default: true.
-	 *     @type int $page Number of the page of results to return.
-	 *           Will be overridden by URL parameter. Default: 1.
-	 *     @type int $per_page Number of results to return per page.
-	 *           Will be overridden by URL parameter. Default: 25.
-	 *     @type int $max Optional. Max results to display.
-	 *     @type string $search_terms Optional. Term to match against
-	 *           component_name and component_action.
-	 *     @type string $page_arg URL argument to use for pagination.
-	 *           Default: 'npage'.
+	 *     An array of arguments. See {@link bp_has_notifications()}
+	 *     for more details.
 	 * }
 	 */
 	public function __construct( $args = array() ) {
 
 		// Parse arguments
 		$r = wp_parse_args( $args, array(
-			'user_id'      => 0,
-			'is_new'       => true,
-			'page'         => 1,
-			'per_page'     => 25,
-			'order_by'     => 'date_notified',
-			'sort_order'   => 'DESC',
-			'max'          => null,
-			'search_terms' => '',
-			'page_arg'     => 'npage',
+			'id'                => false,
+			'user_id'           => 0,
+			'item_id'           => false,
+			'secondary_item_id' => false,
+			'component_name'    => bp_notifications_get_registered_components(),
+			'component_action'  => false,
+			'is_new'            => true,
+			'search_terms'      => '',
+			'order_by'          => 'date_notified',
+			'sort_order'        => 'DESC',
+			'page_arg'          => 'npage',
+			'page'              => 1,
+			'per_page'          => 25,
+			'max'               => null,
+			'meta_query'        => false,
+			'date_query'        => false
 		) );
 
 		// Overrides
 
-		// Set which pagination page
-		if ( isset( $_GET[ $r['page_arg'] ] ) ) {
-			$pag_page = intval( $_GET[ $r['page_arg'] ] );
-		} else {
-			$pag_page = $r['page'];
-		}
-
-		// Set the number to show per page
-		if ( isset( $_GET['num'] ) ) {
-			$pag_num = intval( $_GET['num'] );
-		} else {
-			$pag_num = intval( $r['per_page'] );
-		}
-
 		// Sort order direction
 		$orders = array( 'ASC', 'DESC' );
 		if ( ! empty( $_GET['sort_order'] ) && in_array( $_GET['sort_order'], $orders ) ) {
-			$sort_order = $_GET['sort_order'];
+			$r['sort_order'] = $_GET['sort_order'];
 		} else {
-			$sort_order = in_array( $r['sort_order'], $orders ) ? $r['sort_order'] : 'DESC';
+			$r['sort_order'] = in_array( $r['sort_order'], $orders ) ? $r['sort_order'] : 'DESC';
 		}
 
 		// Setup variables
-		$this->pag_page     = $pag_page;
-		$this->pag_num      = $pag_num;
+		$this->pag_arg      = sanitize_key( $r['page_arg'] );
+		$this->pag_page     = bp_sanitize_pagination_arg( $this->pag_arg, $r['page']     );
+		$this->pag_num      = bp_sanitize_pagination_arg( 'num',          $r['per_page'] );
 		$this->user_id      = $r['user_id'];
 		$this->is_new       = $r['is_new'];
 		$this->search_terms = $r['search_terms'];
-		$this->page_arg     = $r['page_arg'];
 		$this->order_by     = $r['order_by'];
-		$this->sort_order   = $sort_order;
-
-		// Get the notifications
-		$notifications      = BP_Notifications_Notification::get_current_notifications_for_user( array(
-			'user_id'      => $this->user_id,
-			'is_new'       => $this->is_new,
-			'page'         => $this->pag_page,
-			'per_page'     => $this->pag_num,
-			'search_terms' => $this->search_terms,
-			'order_by'     => $this->order_by,
-			'sort_order'   => $this->sort_order,
-		) );
+		$this->sort_order   = $r['sort_order'];
+		$this->query_vars   = array(
+			'id'                => $r['id'],
+			'user_id'           => $this->user_id,
+			'item_id'           => $r['item_id'],
+			'secondary_item_id' => $r['secondary_item_id'],
+			'component_name'    => $r['component_name'],
+			'component_action'  => $r['component_action'],
+			'meta_query'        => $r['meta_query'],
+			'date_query'        => $r['date_query'],
+			'is_new'            => $this->is_new,
+			'search_terms'      => $this->search_terms,
+			'order_by'          => $this->order_by,
+			'sort_order'        => $this->sort_order,
+			'page'              => $this->pag_page,
+			'per_page'          => $this->pag_num,
+		);
 
 		// Setup the notifications to loop through
-		$this->notifications            = $notifications['notifications'];
-		$this->total_notification_count = $notifications['total'];
+		$this->notifications            = BP_Notifications_Notification::get( $this->query_vars );
+		$this->total_notification_count = BP_Notifications_Notification::get_total_count( $this->query_vars );
 
 		if ( empty( $this->notifications ) ) {
 			$this->notification_count       = 0;
 			$this->total_notification_count = 0;
 
 		} else {
-			if ( ! empty( $max ) ) {
-				if ( $max >= count( $this->notifications ) ) {
+			if ( ! empty( $r['max'] ) ) {
+				if ( $r['max'] >= count( $this->notifications ) ) {
 					$this->notification_count = count( $this->notifications );
 				} else {
-					$this->notification_count = (int) $max;
+					$this->notification_count = (int) $r['max'];
 				}
 			} else {
 				$this->notification_count = count( $this->notifications );
@@ -319,19 +357,20 @@ class BP_Notifications_Template {
 		}
 
 		if ( (int) $this->total_notification_count && (int) $this->pag_num ) {
+			$add_args = array(
+				'sort_order' => $this->sort_order,
+			);
+
 			$this->pag_links = paginate_links( array(
-				'base'      => add_query_arg( $this->page_arg, '%#%' ),
+				'base'      => add_query_arg( $this->pag_arg, '%#%' ),
 				'format'    => '',
 				'total'     => ceil( (int) $this->total_notification_count / (int) $this->pag_num ),
 				'current'   => $this->pag_page,
 				'prev_text' => _x( '&larr;', 'Notifications pagination previous text', 'buddypress' ),
 				'next_text' => _x( '&rarr;', 'Notifications pagination next text',     'buddypress' ),
 				'mid_size'  => 1,
+				'add_args'  => $add_args,
 			) );
-
-			// Remove first page from pagination
-			$this->pag_links = str_replace( '?'      . $r['page_arg'] . '=1', '', $this->pag_links );
-			$this->pag_links = str_replace( '&#038;' . $r['page_arg'] . '=1', '', $this->pag_links );
 		}
 	}
 
@@ -402,6 +441,12 @@ class BP_Notifications_Template {
 			return true;
 
 		} elseif ( $this->current_notification + 1 == $this->notification_count ) {
+
+			/**
+			 * Fires right before the rewinding of notification posts.
+			 *
+			 * @since BuddyPress (1.9.0)
+			 */
 			do_action( 'notifications_loop_end');
 
 			$this->rewind_notifications();
@@ -428,6 +473,12 @@ class BP_Notifications_Template {
 
 		// loop has just started
 		if ( 0 === $this->current_notification ) {
+
+			/**
+			 * Fires if the current notification item is the first in the notification loop.
+			 *
+			 * @since BuddyPress (1.9.0)
+			 */
 			do_action( 'notifications_loop_start' );
 		}
 	}
@@ -447,16 +498,11 @@ class BP_Notifications_Template {
  * @param array $args {
  *     Arguments for limiting the contents of the notifications loop. Can be
  *     passed as an associative array, or as a URL query string.
- *     @type int $user_id ID of the user to whom notifications belong. Default:
- *           ID of the logged-in user.
- *     @type bool $is_new Whether to limit query to unread notifications.
- *           Default: when viewing the 'unread' tab, defaults to true; when
- *           viewing the 'read' tab, defaults to false.
- *     @type int $page The page of notifications being fetched. Default: 1.
- *     @type int $per_page Number of items to display on a page. Default: 25.
+ *
+ *     See {@link BP_Notifications_Notification::get()} for detailed
+ *     information on the arguments.  In addition, also supports:
+ *
  *     @type int $max Optional. Max items to display. Default: false.
- *     @type string $search_terms Optional. Term to match against
- *           component_name and component_action.
  *     @type string $page_arg URL argument to use for pagination.
  *           Default: 'npage'.
  * }
@@ -468,6 +514,10 @@ function bp_has_notifications( $args = '' ) {
 		$is_new = 1;
 	} elseif ( bp_is_current_action( 'read' ) ) {
 		$is_new = 0;
+
+	// not on a notifications page? default to fetch new notifications
+	} else {
+		$is_new = 1;
 	}
 
 	// Get the user ID
@@ -479,13 +529,24 @@ function bp_has_notifications( $args = '' ) {
 
 	// Parse the args
 	$r = bp_parse_args( $args, array(
-		'user_id'      => $user_id,
-		'is_new'       => $is_new,
-		'page'         => 1,
-		'per_page'     => 25,
-		'max'          => false,
-		'search_terms' => isset( $_REQUEST['s'] ) ? stripslashes( $_REQUEST['s'] ) : '',
-		'page_arg'     => 'npage',
+		'id'                => false,
+		'user_id'           => $user_id,
+		'secondary_item_id' => false,
+		'component_name'    => bp_notifications_get_registered_components(),
+		'component_action'  => false,
+		'is_new'            => $is_new,
+		'search_terms'      => isset( $_REQUEST['s'] ) ? stripslashes( $_REQUEST['s'] ) : '',
+		'order_by'          => 'date_notified',
+		'sort_order'        => 'DESC',
+		'meta_query'        => false,
+		'date_query'        => false,
+		'page'              => 1,
+		'per_page'          => 25,
+
+		// these are additional arguments that are not available in
+		// BP_Notifications_Notification::get()
+		'max'               => false,
+		'page_arg'          => 'npage',
 	), 'has_notifications' );
 
 	// Get the notifications
@@ -494,6 +555,14 @@ function bp_has_notifications( $args = '' ) {
 	// Setup the global query loop
 	buddypress()->notifications->query_loop = $query_loop;
 
+	/**
+	 * Filters whether or not the user has notifications to display.
+	 *
+	 * @since BuddyPress (1.9.0)
+	 *
+	 * @param bool                      $value      Whether or not there are notifications to display.
+	 * @param BP_Notifications_Template $query_loop BP_Notifications_Template object instance.
+	 */
 	return apply_filters( 'bp_has_notifications', $query_loop->has_notifications(), $query_loop );
 }
 
@@ -537,6 +606,14 @@ function bp_the_notification_id() {
 	 * @return int ID of the current notification.
 	 */
 	function bp_get_the_notification_id() {
+
+		/**
+		 * Filters the ID of the notification currently being iterated on.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param int $id ID of the notification being iterated on.
+		 */
 		return apply_filters( 'bp_get_the_notification_id', buddypress()->notifications->query_loop->notification->id );
 	}
 
@@ -556,6 +633,14 @@ function bp_the_notification_item_id() {
 	 * @return int ID of the item associated with the current notification.
 	 */
 	function bp_get_the_notification_item_id() {
+
+		/**
+		 * Filters the associated item ID of the notification currently being iterated on.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param int $item_id ID of the associated item.
+		 */
 		return apply_filters( 'bp_get_the_notification_item_id', buddypress()->notifications->query_loop->notification->item_id );
 	}
 
@@ -575,6 +660,14 @@ function bp_the_notification_secondary_item_id() {
 	 * @return int ID of the secondary item associated with the current notification.
 	 */
 	function bp_get_the_notification_secondary_item_id() {
+
+		/**
+		 * Filters the secondary associated item ID of the notification currently being iterated on.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param int $secondary_item_id ID of the secondary associated item.
+		 */
 		return apply_filters( 'bp_get_the_notification_secondary_item_id', buddypress()->notifications->query_loop->notification->secondary_item_id );
 	}
 
@@ -594,6 +687,14 @@ function bp_the_notification_component_name() {
 	 * @return int Name of the component associated with the current notification.
 	 */
 	function bp_get_the_notification_component_name() {
+
+		/**
+		 * Filters the name of the component associated with the notification currently being iterated on.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param int $component_name Name of the component associated with the current notification.
+		 */
 		return apply_filters( 'bp_get_the_notification_component_name', buddypress()->notifications->query_loop->notification->component_name );
 	}
 
@@ -613,6 +714,14 @@ function bp_the_notification_component_action() {
 	 * @return int Name of the action associated with the current notification.
 	 */
 	function bp_get_the_notification_component_action() {
+
+		/**
+		 * Filters the name of the action associated with the notification currently being iterated on.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param int $component_action Name of the action associated with the current notification.
+		 */
 		return apply_filters( 'bp_get_the_notification_component_action', buddypress()->notifications->query_loop->notification->component_action );
 	}
 
@@ -632,6 +741,14 @@ function bp_the_notification_date_notified() {
 	 * @return string Timestamp of the current notification.
 	 */
 	function bp_get_the_notification_date_notified() {
+
+		/**
+		 * Filters the timestamp of the current notification.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $date_notified Timestamp of the current notification.
+		 */
 		return apply_filters( 'bp_get_the_notification_date_notified', buddypress()->notifications->query_loop->notification->date_notified );
 	}
 
@@ -664,6 +781,13 @@ function bp_the_notification_time_since() {
 			$retval = __( 'Date not found', 'buddypress' );
 		}
 
+		/**
+		 * Filters the time since value of the current notification.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval Time since value for current notification.
+		 */
 		return apply_filters( 'bp_get_the_notification_time_since', $retval );
 	}
 
@@ -684,9 +808,6 @@ function bp_the_notification_description() {
 	 * @return string
 	 */
 	function bp_get_the_notification_description() {
-
-		// Setup local variables
-		$description  = '';
 		$bp           = buddypress();
 		$notification = $bp->notifications->query_loop->notification;
 
@@ -700,11 +821,21 @@ function bp_the_notification_description() {
 
 		// Allow non BuddyPress components to hook in
 		} else {
+
+			/** This filter is documented in bp-notifications/bp-notifications-functions.php */
 			$description = apply_filters_ref_array( 'bp_notifications_get_notifications_for_user', array( $notification->component_action, $notification->item_id, $notification->secondary_item_id, 1 ) );
 		}
 
-		// Filter and return
-		return apply_filters( 'bp_get_the_notification_description', $description );
+		/**
+		 * Filters the full-text description for a specific notification.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 * @since BuddyPress (2.3.0) Added the `$notification` parameter.
+		 *
+		 * @param string $description  Full-text description for a specific notification.
+		 * @param object $notification Notification object.
+		 */
+		return apply_filters( 'bp_get_the_notification_description', $description, $notification );
 	}
 
 /**
@@ -724,21 +855,69 @@ function bp_the_notification_mark_read_link() {
 	 */
 	function bp_get_the_notification_mark_read_link() {
 
-		// Get the URL with nonce, action, and id
-		$url = wp_nonce_url( add_query_arg( array( 'action' => 'read', 'notification_id' => bp_get_the_notification_id() ), bp_get_notifications_unread_permalink() ), 'bp_notification_mark_read_' . bp_get_the_notification_id() );
-
 		// Start the output buffer
 		ob_start(); ?>
 
-		<a href="<?php echo esc_url( $url ); ?>" class="mark-read primary"><?php _e( 'Read', 'buddypress' ); ?></a>
+		<a href="<?php bp_the_notification_mark_read_url(); ?>" class="mark-read primary"><?php _e( 'Read', 'buddypress' ); ?></a>
 
 		<?php $retval = ob_get_clean();
 
+		/**
+		 * Filters the mark read link for the current notification.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval HTML for the mark read link for the current notification.
+		 */
 		return apply_filters( 'bp_get_the_notification_mark_read_link', $retval );
 	}
 
 /**
- * Output the mark read link for the current notification.
+ * Output the URL used for marking a single notification as read
+ *
+ * Since this function directly outputs a URL, it is escaped.
+ *
+ * @since BuddyPress (2.1.0)
+ *
+ * @uses bp_get_the_notification_mark_read_url()
+ */
+function bp_the_notification_mark_read_url() {
+	echo esc_url( bp_get_the_notification_mark_read_url() );
+}
+	/**
+	 * Return the URL used for marking a single notification as read
+ 	 *
+	 * @since BuddyPress (2.1.0)
+	 */
+	function bp_get_the_notification_mark_read_url() {
+
+		// Get the notification ID
+		$id   = bp_get_the_notification_id();
+
+		// Get the args to add to the URL
+		$args = array(
+			'action'          => 'read',
+			'notification_id' => $id
+		);
+
+		// Add the args to the URL
+		$url = add_query_arg( $args, bp_get_notifications_unread_permalink() );
+
+		// Add the nonce
+		$url = wp_nonce_url( $url, 'bp_notification_mark_read_' . $id );
+
+		/**
+		 * Filters the URL used for marking a single notification as read.
+		 *
+		 * @since BuddyPress (2.1.0)
+		 *
+		 * @param string $url URL to use for marking the single notification as read.
+		 */
+		return apply_filters( 'bp_get_the_notification_mark_read_url', $url );
+	}
+
+/**
+ * Output the mark unread link for the current notification.
  *
  * @since BuddyPress (1.9.0)
  *
@@ -748,23 +927,71 @@ function bp_the_notification_mark_unread_link() {
 	echo bp_get_the_notification_mark_unread_link();
 }
 	/**
-	 * Return the mark read link for the current notification.
+	 * Return the mark unread link for the current notification.
 	 *
 	 * @since BuddyPress (1.9.0)
 	 */
 	function bp_get_the_notification_mark_unread_link() {
 
-		// Get the URL with nonce, action, and id
-		$url = wp_nonce_url( add_query_arg( array( 'action' => 'unread', 'notification_id' => bp_get_the_notification_id() ), bp_get_notifications_read_permalink() ), 'bp_notification_mark_unread_' . bp_get_the_notification_id() );
-
 		// Start the output buffer
 		ob_start(); ?>
 
-		<a href="<?php echo esc_url( $url ); ?>" class="mark-unread primary"><?php _e( 'Unread', 'buddypress' ); ?></a>
+		<a href="<?php bp_the_notification_mark_unread_url(); ?>" class="mark-unread primary"><?php _ex( 'Unread',  'Notification screen action', 'buddypress' ); ?></a>
 
 		<?php $retval = ob_get_clean();
 
+		/**
+		 * Filters the link used for marking a single notification as unread.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval HTML for the mark unread link for the current notification.
+		 */
 		return apply_filters( 'bp_get_the_notification_mark_unread_link', $retval );
+	}
+
+/**
+ * Output the URL used for marking a single notification as unread
+ *
+ * Since this function directly outputs a URL, it is escaped.
+ *
+ * @since BuddyPress (2.1.0)
+ *
+ * @uses bp_get_the_notification_mark_unread_url()
+ */
+function bp_the_notification_mark_unread_url() {
+	echo esc_url( bp_get_the_notification_mark_unread_url() );
+}
+	/**
+	 * Return the URL used for marking a single notification as unread
+ 	 *
+	 * @since BuddyPress (2.1.0)
+	 */
+	function bp_get_the_notification_mark_unread_url() {
+
+		// Get the notification ID
+		$id   = bp_get_the_notification_id();
+
+		// Get the args to add to the URL
+		$args = array(
+			'action'          => 'unread',
+			'notification_id' => $id
+		);
+
+		// Add the args to the URL
+		$url = add_query_arg( $args, bp_get_notifications_read_permalink() );
+
+		// Add the nonce
+		$url = wp_nonce_url( $url, 'bp_notification_mark_unread_' . $id );
+
+		/**
+		 * Filters the URL used for marking a single notification as unread.
+		 *
+		 * @since BuddyPress (2.1.0)
+		 *
+		 * @param string $url URL to use for marking the single notification as unread.
+		 */
+		return apply_filters( 'bp_get_the_notification_mark_unread_url', $url );
 	}
 
 /**
@@ -790,6 +1017,13 @@ function bp_the_notification_mark_link() {
 			$retval = bp_get_the_notification_mark_read_link();
 		}
 
+		/**
+		 * Filters the mark link for the current notification.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval The mark link for the current notification.
+		 */
 		return apply_filters( 'bp_get_the_notification_mark_link', $retval );
 	}
 
@@ -810,6 +1044,45 @@ function bp_the_notification_delete_link() {
 	 */
 	function bp_get_the_notification_delete_link() {
 
+		// Start the output buffer
+		ob_start(); ?>
+
+		<a href="<?php bp_the_notification_delete_url(); ?>" class="delete secondary confirm"><?php _e( 'Delete', 'buddypress' ); ?></a>
+
+		<?php $retval = ob_get_clean();
+
+		/**
+		 * Filters the delete link for the current notification.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval HTML for the delete link for the current notification.
+		 */
+		return apply_filters( 'bp_get_the_notification_delete_link', $retval );
+	}
+
+/**
+ * Output the URL used for deleting a single notification
+ *
+ * Since this function directly outputs a URL, it is escaped.
+ *
+ * @since BuddyPress (2.1.0)
+ *
+ * @uses esc_url()
+ * @uses bp_get_the_notification_delete_url()
+ */
+function bp_the_notification_delete_url() {
+	echo esc_url( bp_get_the_notification_delete_url() );
+}
+	/**
+	 * Return the URL used for deleting a single notification
+	 *
+	 * @since BuddyPress (2.1.0)
+	 *
+	 * @return string
+	 */
+	function bp_get_the_notification_delete_url() {
+
 		// URL to add nonce to
 		if ( bp_is_current_action( 'unread' ) ) {
 			$link = bp_get_notifications_unread_permalink();
@@ -817,17 +1090,29 @@ function bp_the_notification_delete_link() {
 			$link = bp_get_notifications_read_permalink();
 		}
 
-		// Get the URL with nonce, action, and id
-		$url = wp_nonce_url( add_query_arg( array( 'action' => 'delete', 'notification_id' => bp_get_the_notification_id() ), $link ), 'bp_notification_delete_' . bp_get_the_notification_id() );
+		// Get the ID
+		$id = bp_get_the_notification_id();
 
-		// Start the output buffer
-		ob_start(); ?>
+		// Get the args to add to the URL
+		$args = array(
+			'action'          => 'delete',
+			'notification_id' => $id
+		);
 
-		<a href="<?php echo esc_url( $url ); ?>" class="delete secondary confirm"><?php _e( 'Delete', 'buddypress' ); ?></a>
+		// Add the args
+		$url = add_query_arg( $args, $link );
 
-		<?php $retval = ob_get_clean();
+		// Add the nonce
+		$url = wp_nonce_url( $url, 'bp_notification_delete_' . $id );
 
-		return apply_filters( 'bp_get_the_notification_delete_link', $retval );
+		/**
+		 * Filters the URL used for deleting a single notification.
+		 *
+		 * @since BuddyPress (2.1.0)
+		 *
+		 * @param string $url URL used for deleting a single notification.
+		 */
+		return apply_filters( 'bp_get_the_notification_delete_url', $url );
 	}
 
 /**
@@ -844,10 +1129,10 @@ function bp_the_notification_action_links( $args = '' ) {
 	 * @since BuddyPress (1.9.0)
 	 *
 	 * @param array $args {
-	 *     @type string $before HTML before the links
-	 *     @type string $after HTML after the links
-	 *     @type string $sep HTML between the links
-	 *     @type array $links Array of links to implode by 'sep'
+	 *     @type string $before HTML before the links.
+	 *     @type string $after HTML after the links.
+	 *     @type string $sep HTML between the links.
+	 *     @type array $links Array of links to implode by 'sep'.
 	 * }
 	 *
 	 * @return string HTML links for actions to take on single notifications.
@@ -868,6 +1153,13 @@ function bp_the_notification_action_links( $args = '' ) {
 		// Build the links
 		$retval = $r['before'] . implode( $r['links'], $r['sep'] ) . $r['after'];
 
+		/**
+		 * Filters the action links for the current notification.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $retval HTML links for actions to take on single notifications.
+		 */
 		return apply_filters( 'bp_get_the_notification_action_links', $retval );
 	}
 
@@ -892,8 +1184,20 @@ function bp_notifications_pagination_count() {
 		$from_num   = bp_core_number_format( $start_num );
 		$to_num     = bp_core_number_format( ( $start_num + ( $query_loop->pag_num - 1 ) > $query_loop->total_notification_count ) ? $query_loop->total_notification_count : $start_num + ( $query_loop->pag_num - 1 ) );
 		$total      = bp_core_number_format( $query_loop->total_notification_count );
-		$pag        = sprintf( _n( 'Viewing %1$s to %2$s (of %3$s notification)', 'Viewing %1$s to %2$s (of %3$s notifications)', $total, 'buddypress' ), $from_num, $to_num, $total );
 
+		if ( 1 == $query_loop->total_notification_count ) {
+			$pag = __( 'Viewing 1 notification', 'buddypress' );
+		} else {
+			$pag = sprintf( _n( 'Viewing %1$s - %2$s of %3$s notification', 'Viewing %1$s - %2$s of %3$s notifications', $query_loop->total_notification_count, 'buddypress' ), $from_num, $to_num, $total );
+		}
+
+		/**
+		 * Filters the pagination count for the current notification loop.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $pag HTML for the pagination count.
+		 */
 		return apply_filters( 'bp_notifications_pagination_count', $pag );
 	}
 
@@ -913,6 +1217,14 @@ function bp_notifications_pagination_links() {
 	 * @return string HTML for the pagination links.
 	 */
 	function bp_get_notifications_pagination_links() {
+
+		/**
+		 * Filters the pagination links for the current notification loop.
+		 *
+		 * @since BuddyPress (1.9.0)
+		 *
+		 * @param string $pag_links HTML for the pagination links.
+		 */
 		return apply_filters( 'bp_get_notifications_pagination_links', buddypress()->notifications->query_loop->pag_links );
 	}
 
@@ -950,4 +1262,26 @@ function bp_notifications_sort_order_form() {
 	</form>
 
 <?php
+}
+
+/**
+ * Output the dropdown for bulk management of notifications.
+ *
+ * @since BuddyPress (2.2.0)
+ */
+function bp_notifications_bulk_management_dropdown() {
+	?>
+	<label class="bp-screen-reader-text" for="notification-select"><?php _e( 'Select Bulk Action', 'buddypress' ); ?></label>
+	<select name="notification_bulk_action" id="notification-select">
+		<option value="" selected="selected"><?php _e( 'Bulk Actions', 'buddypress' ); ?></option>
+
+		<?php if ( bp_is_current_action( 'unread' ) ) : ?>
+			<option value="read"><?php _e( 'Mark read', 'buddypress' ); ?></option>
+		<?php elseif ( bp_is_current_action( 'read' ) ) : ?>
+			<option value="unread"><?php _e( 'Mark unread', 'buddypress' ); ?></option>
+		<?php endif; ?>
+		<option value="delete"><?php _e( 'Delete', 'buddypress' ); ?></option>
+	</select>
+	<input type="submit" id="notification-bulk-manage" class="button action" value="<?php esc_attr_e( 'Apply', 'buddypress' ); ?>">
+	<?php
 }

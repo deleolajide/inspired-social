@@ -31,6 +31,24 @@ var MINI_WORKGROUPS	= [];
 var MINI_PASSWORDS	= [];
 var MINI_RESOURCE	= JAPPIX_RESOURCE + ' Mini';
 var MINI_VISITOR	= null;
+var MINI_VIDEO		= {};
+
+
+
+$(document).bind('ofmeet.media.obtained', function ()
+{
+	console.log("ofmeet.media.obtained");		
+	ofmeet.joinRoom(MINI_VIDEO.room);
+	ofmeet.addMediaToRoom();
+});
+
+$(document).bind('remotestreamadded.jingle', function (event, data, sid)
+{
+	console.log("remotestreamadded.jingle", event, data, sid);
+	notifyAudioVideo(MINI_VIDEO.hash, MINI_VIDEO.xid, MINI_VIDEO.image);	
+});
+
+
 
 // Setups connection handlers
 function setupConMini(con) {
@@ -40,61 +58,6 @@ function setupConMini(con) {
 	con.registerHandler('onerror', handleErrorMini);
 	con.registerHandler('onconnect', connectedMini);
 	
-	//WebRtc.callback = {onReady: handleReady, onMute: handleMuteSignal};
-	//WebRtc.init(con, {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]});	
-	
-}
-
-function handleReady(peer)
-{
-	logThis("handleReady");
-}
-
-function handleMuteSignal(peer, type, muc, audioMuted, videoMuted, videoRequested)
-{
-	logThis("handleMuteSignal " + peer.farParty + " " + audioMuted + " " + videoMuted + " " + type + " " + muc, 3);
-
-	var name = peer.farParty.split("@")[0];
-	var xid = peer.farParty.split("/")[0];
-	var hash = hex_md5(xid);
-	var nick = name;
-
-	if (muc)
-	{
-		name = peer.farParty.split("/")[1];
-		nick = unescapeNode(name);	
-		
-		if (type == "room")
-		{
-			xid = unescapeNode(peer.farParty);
-		}
-		
-	} else {
-		nick = jQuery('#jappix_mini a#friend-' + hash).text().revertHtmlEnc();
-	}
-	
-	
-	if (videoRequested) 
-	{
-		var message = (!audioMuted ? "Started" : "Stopped") + " sending video";
-	} else {
-		var message = (!audioMuted ? "Started" : "Stopped") + " sending audio";	
-	}
-	
-	var time = getCompleteTime();
-	var stamp = extractStamp(new Date());
-	var target = '#jappix_mini #chat-' + hash;
-	
-	if(!exists(target) && (!muc))
-		chatMini(type, xid, nick, hash);
-				
-	displayMessageMini(muc ? "groupchat" : "chat", message, xid, nick, hash, time, stamp, 'user-message');
-	
-	if (audioMuted || (videoMuted && videoRequested && audioMuted))
-		clearAudioVideo(hash);	
-	else
-		notifyAudioVideo(hash, xid, muc, videoRequested);
-
 }
 	
 // Connects the user with the given logins
@@ -130,7 +93,7 @@ function connectMini(domain, user, password) {
 		if(MINI_ANONYMOUS) {
 			// Anonymous mode disabled?
 			if(!allowedAnonymous()) {
-				logThis('Not allowed to use anonymous mode.', 2);
+				//logThis('Not allowed to use anonymous mode.', 2);
 				
 				// Notify this error
 				notifyErrorMini();
@@ -140,7 +103,7 @@ function connectMini(domain, user, password) {
 			
 			// Bad domain?
 			else if(lockHost() && (domain != HOST_ANONYMOUS)) {
-				logThis('Not allowed to connect to this anonymous domain: ' + domain, 2);
+				//logThis('Not allowed to connect to this anonymous domain: ' + domain, 2);
 				
 				// Notify this error
 				notifyErrorMini();
@@ -155,7 +118,7 @@ function connectMini(domain, user, password) {
 		else {
 			// Bad domain?
 			if(lockHost() && (domain != HOST_MAIN)) {
-				logThis('Not allowed to connect to this main domain: ' + domain, 2);
+				//logThis('Not allowed to connect to this main domain: ' + domain, 2);
 				
 				// Notify this error
 				notifyErrorMini();
@@ -174,12 +137,12 @@ function connectMini(domain, user, password) {
 		// We connect !
 		con.connect(oArgs);
 		
-		logThis('Jappix Mini is connecting...', 3);
+		//logThis('Jappix Mini is connecting...', 3);
 	}
 	
 	catch(e) {
 		// Logs errors
-		logThis('Error while logging in: ' + e, 1);
+		//logThis('Error while logging in: ' + e, 1);
 		
 		// Reset Jappix Mini
 		disconnectedMini();
@@ -238,7 +201,7 @@ function saveSessionMini() {
 	// Suspend connection
 	con.suspend(false);
 	
-	logThis('Jappix Mini session save tool launched.', 3);
+	//logThis('Jappix Mini session save tool launched.', 3);
 }
 
 // Disconnects the connected user
@@ -259,7 +222,7 @@ function disconnectMini() {
 	
 	//WebRtc.close();		
 	
-	logThis('Jappix Mini is disconnecting...', 3);
+	//logThis('Jappix Mini is disconnecting...', 3);
 	
 	return false;
 }
@@ -306,7 +269,7 @@ function disconnectedMini() {
 	
 	//document.getElementById("wordpress").contentWindow.location.href = "wp-login.php?action=logout&redirect_to=wp-index.php"
 	
-	logThis('Jappix Mini is now disconnected.', 3);
+	//logThis('Jappix Mini is now disconnected.', 3);
 }
 
 // Handles the incoming messages
@@ -325,7 +288,7 @@ function handleMessageMini(msg)
 				xid = bareXID(xid); 	// chat JID is bareJID
 		}
 				
-		logThis('WebRtc message received from: ' + xid);	
+		//logThis('WebRtc message received from: ' + xid);	
 		
 		//WebRtc.handleMessage(webrtcXml, xid, room);
 		
@@ -442,7 +405,7 @@ function handleMessageMini(msg)
 			if((!jQuery(target + ' a.jm_chat-tab').hasClass('jm_clicked') || !isFocused()) && (message_type == 'user-message'))
 				notifyMessageMini(nick, hash, body);
 			
-			logThis('Message received from: ' + from);
+			//logThis('Message received from: ' + from);
 		}
 	}
 }
@@ -475,7 +438,7 @@ function handleIQMini(iq) {
 		
 		con.send(iqResponse);
 		
-		logThis('Received software version query: ' + iqFrom);
+		//logThis('Received software version query: ' + iqFrom);
 	}
 	
 	// Roster push
@@ -485,7 +448,7 @@ function handleIQMini(iq) {
 		
 		con.send(iqResponse);
 		
-		logThis('Received a roster push.');
+		//logThis('Received a roster push.');
 	}
 	
 	// Disco info query
@@ -517,7 +480,7 @@ function handleIQMini(iq) {
 		
 		con.send(iqResponse);
 		
-		logThis('Received a disco#infos query.');
+		//logThis('Received a disco#infos query.');
 	}
 	
 	// User time query
@@ -530,7 +493,7 @@ function handleIQMini(iq) {
 		
 		con.send(iqResponse);
 		
-		logThis('Received local time query: ' + iqFrom);
+		//logThis('Received local time query: ' + iqFrom);
 	}
 		
 	else if(jQuery(iqNode).find('offer').size() && (iqType == 'set')) {
@@ -577,7 +540,7 @@ function handleErrorMini(err) {
 		// Notify this error
 		disconnectedMini();
 		
-		logThis('First level error received.', 1);
+		//logThis('First level error received.', 1);
 	}
 }
 
@@ -586,7 +549,7 @@ function handlePresenceMini(pr) {
 	// Get the values
 	var from = fullXID(getStanzaFrom(pr));
 	
-	logThis('Presence received from: ' + from);
+	//logThis('Presence received from: ' + from);
 	
 	var time = getCompleteTime();
 	var stamp = extractStamp(new Date());
@@ -594,7 +557,7 @@ function handlePresenceMini(pr) {
 	
 	if (pr.getChild('agent-status', 'http://jabber.org/protocol/workgroup'))
 	{	
-		logThis('agent-status', 3);
+		//logThis('agent-status', 3);
 		
 		var fastpath = pr.getNode();
 		var workGroup, maxChats, free = true;
@@ -625,7 +588,7 @@ function handlePresenceMini(pr) {
 			
 			if (workGroup)
 			{
-				logThis('agent-status message  to ' + workGroup, 3);			
+				//logThis('agent-status message  to ' + workGroup, 3);			
 				var text = "<a onclick='chatMini(&quot;groupchat&quot;, &quot;" + sessionXid + "&quot;, &quot;" + username +"&quot;, &quot;" + sessionHash + "&quot;, null, true);'>Talking with " + username + " about " + question + "</a>";
 				
 				displayMessageMini("groupchat", text, workGroup + "/" + nick, nick, hex_md5(workGroup), time, stamp, 'user-message');		
@@ -638,7 +601,7 @@ function handlePresenceMini(pr) {
 	
 	if (pr.getChild('notify-queue-details', 'http://jabber.org/protocol/workgroup'))
 	{
-		logThis('notify-queue-details', 3);
+		//logThis('notify-queue-details', 3);
 		
 		var fastpath = pr.getNode(), free = true;
 		var workGroup = 'workgroup-' + nick + "@conference." + MINI_DOMAIN;		
@@ -667,7 +630,7 @@ function handlePresenceMini(pr) {
 			{
 				free = false;
 			
-				logThis('notify-queue-details message  to ' + workGroup, 3);	
+				//logThis('notify-queue-details message  to ' + workGroup, 3);	
 				
 				var text = "A visitor is " + position + " in queue, waiting for " + time + " secconds";
 				displayMessageMini("groupchat", text, workGroup + "/" + nick, nick, hex_md5(workGroup), time, stamp, 'user-message');		
@@ -679,7 +642,7 @@ function handlePresenceMini(pr) {
 	
 	if (pr.getChild('notify-queue', 'http://jabber.org/protocol/workgroup'))
 	{
-		logThis('notify-queue', 3);
+		//logThis('notify-queue', 3);
 
 		var fastpath = pr.getNode(), free = true;	
 		var workGroup = 'workgroup-' + nick + "@conference." + MINI_DOMAIN;		
@@ -709,7 +672,7 @@ function handlePresenceMini(pr) {
 		if (count && oldest && waitTime && status)
 		{
 			free = false;		
-			logThis('notify-queue message  to ' + workGroup, 3);	
+			//logThis('notify-queue message  to ' + workGroup, 3);	
 		
 			var text = "Queue has " + count + " people waiting for as long as " + waitTime + " seconds";
 			displayMessageMini("groupchat", text, workGroup + "/" + nick, nick, hex_md5(workGroup), time, stamp, 'user-message');		
@@ -758,7 +721,7 @@ function handlePresenceMini(pr) {
 		if(show == 'unavailable')
 		{
 			//WebRtc.handleRoster(myXid, from, getXIDNick(from), "leave");
-			console.log("WEBRTC ROSTER LEAVE " + myXid + " " + from);
+			//console.log("WEBRTC ROSTER LEAVE " + myXid + " " + from);
 					
 			if(exists(groupchat_path)) 
 			{	
@@ -768,13 +731,17 @@ function handlePresenceMini(pr) {
 		} else {
 
 			//WebRtc.handleRoster(myXid, from, getXIDNick(from), "join");
-			console.log("WEBRTC ROSTER JOIN " + myXid + " " + from);
+			//console.log("WEBRTC ROSTER JOIN " + myXid + " " + from);
 			
 			if(exists(groupchat_path) && resource != unescape(jQuery(groupchat_path).attr('data-nick'))) 
 			{	
-				displayMessageMini("groupchat", "has joined conversation", unescapeNode(from), unescapeNode(resource), hash, time, stamp, 'user-message');				
+				//displayMessageMini("groupchat", "has joined conversation", unescapeNode(from), unescapeNode(resource), hash, time, stamp, 'user-message');				
 			}			
 		}
+		
+	} else {
+		
+		if (nick != MINI_USER) addBuddyMini(xid, hash, nick);
 	}
 
 	
@@ -810,6 +777,7 @@ function handlePresenceMini(pr) {
 	}
 	
 	// Change the show presence of this buddy
+	
 	jQuery(friend + ' span.jm_presence, ' + chat + ' span.jm_presence').attr('class', 'jm_presence jm_images jm_' + show);
 
 	// Change the status of this buddy
@@ -930,7 +898,7 @@ function presenceMini(type, show, priority, status, to, password, limit_history,
 	if(!type)
 		type = 'available';
 	
-	logThis('Presence sent: ' + type, 3);
+	//logThis('Presence sent: ' + type, 3);
 }
 
 // Sends a given message
@@ -958,7 +926,7 @@ function sendMessageMini(aForm) {
 			if(type != 'groupchat')
 				displayMessageMini(type, body, getXID(), 'me', hash, getCompleteTime(), getTimeStamp(), 'user-message');
 			
-			logThis('Message (' + type + ') sent to: ' + xid);
+			//logThis('Message (' + type + ') sent to: ' + xid);
 		}
 	}
 	
@@ -1001,91 +969,48 @@ function notifyMessageMini(nick, hash, body) {
 	show_desktop_notification(nick + ": " + body);
 }
 
-function notifyAudioVideo(hash, xid, muc, videoRequested) 
+function notifyAudioVideo(hash, xid, imageName) 
 {
 	// Define the paths
 	
 	var tab = '#jappix_mini #chat-' + hash + ' a.jm_chat-tab';
 	var notify = tab + ' span.jm_media_notify';
-	var image = "chat/img/others/call_off.gif";
-/*	
-	if (muc)
-	{
-		var room = xid.split("@")[0];
-		
-		if (WebRtc.isRemoteRoomMuted(room))
-		{
-			image = "chat/img/others/call_on.png";
-				
-		} else {
-			image = "chat/img/others/call_off.gif";		
-		
-		}
-		
-		
-	} else {
+	var image = "chat/img/others/" + imageName + "_off.gif";
 	
-		if (videoRequested)
-		{
-			if (WebRtc.hasRemoteUserVideo(xid))
-			{
-				if (WebRtc.isRemoteUserVideoMuted(xid))
-					image = "chat/img/others/video_on.png";			
-				else
-					image = "chat/img/others/video_off.gif";			
-			}
-			
-		} else {
-		
-			if (WebRtc.isRemoteUserMuted(xid))
-				image = "chat/img/others/call_on.png";			
-			else 
-				image = "chat/img/others/call_off.gif";	
-		}
-		
-	}
-*/	
 	if(!exists(notify))
 		jQuery(tab).append(
 			'<span class="jm_media_notify">' + 
-				'<img onclick="muteRemote(this, ' + muc + ')" src="' + image + '" style="width:16px" id="' + xid + '" />' + 
+				'<img onclick="muteRemote(this)" src="' + image + '" style="width:16px" id="' + xid + '" />' + 
 			'</span>'
 		);
 }
 
-function muteRemote(img, muc)
+function muteRemote(img)
 {
 	console.log("muteRemote " + img.id);
+	var mute = false;
 		
 	if (img.src.indexOf("call_on.png") > -1)
 	{
 		img.src = "chat/img/others/call_off.gif";
-		var mute = false;
+		ofmeet.doAudioMute(false);
 		
 	} 	
 	else if (img.src.indexOf("call_off.gif") > -1) 
 	{
 		img.src = "chat/img/others/call_on.png";
-		var mute = true;		
+		ofmeet.doAudioMute(true);	
 	}
 	
 	else if (img.src.indexOf("video_on.png") > -1)
 	{
 		img.src = "chat/img/others/video_off.gif";
-		var mute = false;
+		ofmeet.doVideoMute(false);
 		
 	} else {
 		img.src = "chat/img/others/video_on.png";
-		var mute = true;		
-	}		
-	
-/*		
-	if (muc)
-		WebRtc.muteRemoteRoom(mute, img.id.split("@")[0])	
-	else
-		WebRtc.muteRemoteUser(mute, img.id)
-		
-*/		
+		ofmeet.doVideoMute(true);		
+	}
 }
 
 
@@ -1758,7 +1683,8 @@ function chatMini(type, xid, nick, hash, pwd, show_pane)
 		if(type != 'groupchat' || (type == 'groupchat' && !groupchat_exists && !workgroup_exists))
 			html += '<a class="jm_one-action jm_close jm_images" title="' + _e("Close") + '" href="#"></a>';
 
-		var webrtcHtml = '<td><a title="Add video to conversation" href="#"><img style="width:24px;" onclick="changeVideoImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/video_on.png"/></a></td>';
+		var webrtcHtml = '<td></td>';
+		if (ofmeet.enabled) webrtcHtml = '<td><a title="Add audio to conversation" href="#"><img style="width:24px;" onclick="changeAudioImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/audio_on.png"/></a></td><td><a title="Add video to conversation" href="#"><img style="width:24px;" onclick="changeVideoImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/video_on.png"/></a></td>';
 		
 		html += '</div>' + 
 			
@@ -1767,7 +1693,7 @@ function chatMini(type, xid, nick, hash, pwd, show_pane)
 					'<div style="margin-left:auto;margin-right:auto;width:25%;"><table><tr>' + 					
 					webrtcHtml + 								
 					'</tr></table></div>' +
-					'<input type="text" class="jm_send-messages" name="body" autocomplete="off" />' + 
+					'<input type="text" placeholder="Type message here" class="jm_send-messages" name="body" autocomplete="off" />' + 
 					'<input type="hidden" name="xid" value="' + xid + '" />' + 
 					'<input type="hidden" name="type" value="' + type + '" />' + 
 				'</form>' + 
@@ -1826,34 +1752,70 @@ function chatMini(type, xid, nick, hash, pwd, show_pane)
 	return false;
 }
 
-
 function changeVideoImage(img, xid, type)
 {
-	console.log("changeVideoImage " + img.src + " " + xid + " " + type)
+	changeImage(img, xid, type, "video")
+}
 
-	if (videoXid)
+function changeAudioImage(img, xid, type)
+{
+	changeImage(img, xid, type, "audio")
+}
+
+function changeImage(img, xid, type, image)
+{
+	var noVideo = image == "audio";
+	MINI_VIDEO.hash = hex_md5(xid);
+	MINI_VIDEO.xid = xid;
+	MINI_VIDEO.image = image;	
+	
+	console.log("changeVideoImage " + img.src + " " + xid + " " + type + " " + ofmeet.isVisible() + " " + noVideo)
+
+	if (MINI_VIDEO.room)
 	{
-		closeWindow();
-		img.src = "chat/img/others/video_on.png";
+		if (MINI_VIDEO.room)
+		{
+			ofmeet.leaveRoom();
+		}
+		
+		if (!noVideo)
+		{
+			ofmeet.visible(false);
+			$('#wordpress').css("display", "");
+		}
+		
+		img.src = "chat/img/others/" + image + "_on.png";
+		
+		presenceMini('', '', '', '', xid + '/' + MINI_NICKNAME);
+		clearAudioVideo(MINI_VIDEO.hash);
+		MINI_VIDEO = {};
+		
+		window.location.reload();		
+		
 	
 	} else {
-	
+		
 		if (type == "groupchat")
 		{
-			var room = getXIDNick(xid); 
+			MINI_VIDEO.room = getXIDNick(xid); 
 
 		} else {
 			var user = getXIDNick(xid);
-			var room = MINI_NICKNAME > user ? MINI_NICKNAME + user : user + MINI_NICKNAME;
-		}	
+			MINI_VIDEO.room = MINI_NICKNAME > user ? MINI_NICKNAME + user : user + MINI_NICKNAME;
+		}
 
-		var url = window.location.protocol + "//" + window.location.host + "/jitsi/apps/ofmeet/?r=" + room	
-		openWindow(url, 800, 640);
+		if (!noVideo)
+		{				
+			ofmeet.visible(true);
+			$('#wordpress').css("display", "none");
+		}
 		
-		videoXid = xid;
-		img.src = "chat/img/others/video_off.gif";		
-	}
+		img.src = "chat/img/others/" + image + "_off.gif";
+		presenceMini('unavailable', '', '', '', xid + '/' + MINI_NICKNAME);
+		ofmeet.obtainMediaPermissions(noVideo); 
+	}	
 }
+
 
 // Events on the chat tool
 function chatEventsMini(type, xid, hash) {
@@ -1997,6 +1959,9 @@ function initializeMini() {
 
 // Displays a roster buddy
 function addBuddyMini(xid, hash, nick, groupchat) {
+
+	//console.log("addBuddyMini", xid, hash, nick, groupchat);
+
 	// Element
 	var element = '#jappix_mini a.jm_friend#friend-' + hash;
 	
@@ -2049,6 +2014,9 @@ function addBuddyMini(xid, hash, nick, groupchat) {
 
 // Removes a roster buddy
 function removeBuddyMini(hash, groupchat) {
+
+	//console.log("removeBuddyMini", hash, groupchat);
+
 	// Remove the buddy from the roster
 	jQuery('#jappix_mini a.jm_friend#friend-' + hash).remove();
 	
@@ -2082,6 +2050,8 @@ function handleRosterMini(iq) {
 		var xid = current.attr('jid');
 		var subscription = current.attr('subscription');
 		
+		//logThis('Roster getting.' + xid + ' ' + subscription, 3);		
+		
 		// Not a gateway
 		if(!isGateway(xid)) {
 			var nick = current.attr('name');
@@ -2109,7 +2079,7 @@ function handleRosterMini(iq) {
 
 function initializeWorkgroups()
 {
-	logThis('initializeWorkgroups');
+	//logThis('initializeWorkgroups');
 	
 	var iq = new JSJaCIQ();
 	iq.setType('get');
@@ -2127,7 +2097,7 @@ function handleWorkGroupsDisco(iq)
 		var name = getXIDNick(xid);
 		var chat_room = 'workgroup-' + name + "@conference." + MINI_DOMAIN
 
-		logThis('handleWorkGroupsDisco...' + xid + " " + name);
+		//logThis('handleWorkGroupsDisco...' + xid + " " + name);
 		
 		MINI_WORKGROUPS.push(chat_room);
 		presenceMini('', '', '', '', xid, '', false, null, true);
@@ -2151,7 +2121,7 @@ function handleAgentStatus(iq)
 		var hash = hex_md5(xid);		
 		var nick = getXIDNick(xid) + " (W)";	
 		
-		logThis('handleAgentStatus...' + xid + " " + nick);
+		//logThis('handleAgentStatus...' + xid + " " + nick);
 		
 		addBuddyMini(xid, hash, nick);		
 	});
@@ -2244,24 +2214,23 @@ function launchMini(autoconnect, show_pane, domain, user, password)
 	
 	createMini(domain, user, password);	
 	
-	logThis('Welcome to Jappix Mini! Happy coding in developer mode!');
+	//logThis('Welcome to Jappix Mini! Happy coding in developer mode!');
 }
 
 function show_desktop_notification(message)
 {
 	console.log("show_desktop_notification " + message);
 	
-	if (window.webkitNotifications && window.webkitNotifications.checkPermission() == 0)
+	if ("Notification" in window && document.hasFocus() == false)
 	{
-		var thumb = "chat/img/others/msm_on.png";
-		var title = "Inspired Social";
-		var popup = window.webkitNotifications.createNotification(thumb, title, message);
-		popup.show();
+		Notification.requestPermission();
 
-		setTimeout(function()
-		{
-			popup.cancel();
-		}, '10000');
+		var options = {
+			body: message,
+			icon: "/inspired/chat/img/others/msm_on.png"
+		}
+		var n = new Notification("Inspired Social", options);
+		setTimeout(n.close.bind(n), 4000);
 	}
 }
 

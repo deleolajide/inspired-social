@@ -4,6 +4,7 @@ Title: Theme
 Setting: piklist_wp_helpers
 Tab: Appearance
 Order: 500
+Tab Order: 40
 */
 
   piklist('field', array(
@@ -28,5 +29,3 @@ Order: 500
       ,'adjacent_posts_rel_link_wp_head' => 'Relational links for the posts adjacent to the current post.'
     )
   ));
-
-?>

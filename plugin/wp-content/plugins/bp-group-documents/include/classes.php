@@ -25,7 +25,7 @@ class BP_Group_Documents {
      */
 
     public function __construct($id = null, $params = false) {
-        global $wpdb, $bp;
+        global $wpdb;
 
         if ($id && ctype_digit($id)) {
             $this->id = $id;
@@ -44,7 +44,7 @@ class BP_Group_Documents {
      * ID passed to the constructor.
      */
     private function populate() {
-        global $wpdb, $bp, $creds;
+        global $wpdb;
 
         if ($row = $wpdb->get_row($wpdb->prepare("SELECT * FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE id = %d", $this->id))) {
             foreach ($this as $field => $value) {
@@ -63,13 +63,14 @@ class BP_Group_Documents {
 
         //if checkbox in unchecked, nothing will be present
         //turn absense of "true" into a "false"
-        if (!isset($params['featured']))
-            $params['featured'] = false;
-
-        foreach ($this as $key => $value) {
-            if (isset($params[$key]))
-                $this->$key = $params[$key];
-        }
+        if ( ! isset( $params['featured'] ) ) {
+	    $params['featured'] = false;
+	}
+	foreach ($this as $key => $value) {
+            if ( isset( $params[$key] ) ) {
+		$this->$key = $params[$key];
+	    }
+	}
     }
 
     /**
@@ -80,8 +81,8 @@ class BP_Group_Documents {
      * the name is not found
      */
     public function populate_by_file($file) {
-        global $bp, $wpdb;
-        if ($row = $wpdb->get_row($wpdb->prepare("SELECT * FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE file LIKE '%s'", $file))) {
+        global $wpdb;
+	if ($row = $wpdb->get_row($wpdb->prepare("SELECT * FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE file LIKE '%s'", $file))) {
             foreach ($this as $field => $value) {
                 $this->$field = $row->$field;
             }
@@ -97,9 +98,9 @@ class BP_Group_Documents {
      * INSERT and UPDATE depending on whether or not the object already exists in the database.
      */
     public function save($check_file_upload = true) {
-        global $wpdb, $bp;
+        global $wpdb;
 
-        do_action('bp_group_documents_data_before_save', $this);
+	do_action('bp_group_documents_data_before_save', $this);
 
         if ($this->id) {
             // Update
@@ -153,9 +154,8 @@ class BP_Group_Documents {
      * Adds one to the download count for the current document
      */
     public function increment_download_count() {
-        global $wpdb, $bp;
-
-        return $wpdb->query($wpdb->prepare("UPDATE " . BP_GROUP_DOCUMENTS_TABLE . " SET download_count = (download_count + 1) WHERE id = %d", $this->id));
+        global $wpdb;
+	return $wpdb->query($wpdb->prepare("UPDATE " . BP_GROUP_DOCUMENTS_TABLE . " SET download_count = (download_count + 1) WHERE id = %d", $this->id));
     }
 
     /**
@@ -164,7 +164,7 @@ class BP_Group_Documents {
      * This method will delete the corresponding row for an object from the database.
      */
     public function delete() {
-        global $wpdb, $bp;
+        global $wpdb;
 
         if ($this->current_user_can('delete')) {
             if ($this->file && file_exists($this->get_path(1)))
@@ -236,16 +236,15 @@ class BP_Group_Documents {
      * to perfrom that action and false if they do not
      * @version 1.2.2
      * v1.2.1, stergatu add group_id variable in order to make it work for every group and not only current group
-     * @global type $bp
      * @param type $action (add, edit, delete)
      * @param type $group_id
      * @return boolean
      */
 
     public function current_user_can($action, $group_id = false) {
-        global $bp;
+        $bp = buddypress();
 
-        if (!$group_id) {
+	if (!$group_id) {
             $group_id = $bp->groups->current_group->id;
         }
         $user_id = get_current_user_id();
@@ -257,11 +256,7 @@ class BP_Group_Documents {
         if (groups_is_user_admin($user_id, $group_id)) {
             return true;
         }
-
-
-
         $user_is_owner = ($this->user_id == $user_id );
-
         switch ($action) {
             case 'add':
                 switch (get_option('bp_group_documents_upload_permission')) {
@@ -477,18 +472,22 @@ class BP_Group_Documents {
     /**
      * Prints documents categories
      * * @since version 0.5.4
-     * @version  1.4, 31/10/2013
+     * @version 3, 8/12/2014 fix category link
+     * v2, 12/11/2014, category link added
      * v1, 21/5/2013, stergatu
      */
     public function categories() {
-        $toprint = '';
+	$bp = buddypress();
+	$toprint = '';
         $categories_of_document = $this->get_document_categories();
-        if (!empty($categories_of_document)) {
+	$group = groups_get_group( array( 'group_id' => $this->group_id ) );
+
+	if (!empty($categories_of_document)) {
             if (!is_wp_error($categories_of_document)) {
                 _e('In category:', 'bp-group-documents');
                 foreach ($categories_of_document as $term) {
-                    $toprint.=' <b>' . $term->name . '</b>,';
-                }
+                    $toprint.=' <b><a href="' . bp_get_group_permalink( $group ) . BP_GROUP_DOCUMENTS_SLUG . '?category=' . $term->term_id . '">' . wp_kses( stripslashes( $term->name ), wp_kses_allowed_html( 'post' ) ) . '</a></b>,';
+		}
                 echo substr($toprint, 0, -1) . '. <br/>';
             }
         }
@@ -555,6 +554,7 @@ class BP_Group_Documents {
             'mov' => 'film.png',
             'mdb' => 'page_white_database.png',
             'mp3' => 'music.png',
+			'mp4' => 'mp4.png',
             'mpeg' => 'film.png',
             'msp' => 'page_white_paintbrush',
             'ods' => 'application_view_columns.png',
@@ -567,6 +567,7 @@ class BP_Group_Documents {
             'ppt' => 'page_white_powerpoint.png',
             'pps' => 'page_white_powerpoint.png',
             'pptx' => 'page_white_powerpoint.png',
+			'ppsx' => 'ppsx.gif',
             'ps' => 'page_white_paintbrush.png',
             'rb' => 'page_white_ruby.png',
             'rtf' => 'page_white_text.png',
@@ -598,10 +599,17 @@ class BP_Group_Documents {
 
     /* Static Functions */
 
+    /**
+     * Get documents ids for the current group
+     * @global type $wpdb
+     * @return type
+     * @version 2, 12/11/2014
+     */
     public static function get_ids_in_current_group() {
-        global $wpdb, $bp;
+        global $wpdb;
+	$bp = buddypress();
 
-        $group_id = $bp->groups->current_group->id;
+	$group_id = $bp->groups->current_group->id;
 
         return $wpdb->get_col($wpdb->prepare("SELECT id FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE group_id = %d", $group_id));
     }
@@ -609,16 +617,14 @@ class BP_Group_Documents {
     /**
      *
      * @global type $wpdb
-     * @global type $bp
      * @param type $group_id
      * @param type $category
      * @return type
      * @version 1.2.2.
      */
     public static function get_total($group_id, $category = false) {
-        global $wpdb, $bp;
-
-        $sql = "SELECT COUNT(*) FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE group_id = %d ";
+        global $wpdb;
+	$sql = "SELECT COUNT(*) FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE group_id = %d ";
         if ($category) {
             //grab all object id's in the passed category
             $category_ids = get_objects_in_term($category, 'group-documents-category');
@@ -636,8 +642,7 @@ class BP_Group_Documents {
     /**
      *
      * @global type $wpdb
-     * @global type $bp
-     * @param type $group_id
+         * @param type $group_id
      * @param type $category
      * @param type $sort
      * @param type $order
@@ -646,7 +651,7 @@ class BP_Group_Documents {
      * @return type
      */
     public static function get_list_by_group($group_id, $category = 0, $sort = 0, $order = 0, $start = 0, $items = 0) {
-        global $wpdb, $bp;
+        global $wpdb;
 
         // if these parameters aren't passed, grab the entire list
         if (!$category && !$sort) {
@@ -677,7 +682,6 @@ class BP_Group_Documents {
     /**
      *
      * @global type $wpdb
-     * @global type $bp
      * @param type $num
      * @param type $group_filter
      * @param type $featured
@@ -685,15 +689,18 @@ class BP_Group_Documents {
      * @version 1.2.2
      */
     public static function get_list_for_newest_widget($num, $group_filter = 0, $featured = 0) {
-        global $wpdb, $bp;
+        global $wpdb;
+	$bp = buddypress();
 
-        if ($group_filter || $featured) {
+	if ($group_filter || $featured) {
             $sql = "SELECT * FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE 1=1 ";
-            if ($group_filter)
-                $sql .= $wpdb->prepare("AND group_id = %d ", $group_filter);
-            if ($featured && BP_GROUP_DOCUMENTS_FEATURED)
-                $sql .= "AND featured = 1 ";
-            $sql .= "ORDER BY created_ts DESC LIMIT %d";
+            if ( $group_filter ) {
+		$sql .= $wpdb->prepare( "AND group_id = %d ", $group_filter );
+	    }
+	    if ( $featured && BP_GROUP_DOCUMENTS_FEATURED ) {
+		$sql .= "AND featured = 1 ";
+	    }
+	    $sql .= "ORDER BY created_ts DESC LIMIT %d";
             $result = $wpdb->get_results($wpdb->prepare($sql, $num), ARRAY_A);
         } else {
             $result = $wpdb->get_results($wpdb->prepare("SELECT d.* FROM " . BP_GROUP_DOCUMENTS_TABLE . " d INNER JOIN {$bp->groups->table_name} g ON d.group_id = g.id WHERE g.status = 'public' ORDER BY created_ts DESC LIMIT %d", $num), ARRAY_A);
@@ -705,7 +712,6 @@ class BP_Group_Documents {
     /**
      *
      * @global type $wpdb
-     * @global type $bp
      * @param type $num
      * @param type $group_filter
      * @param type $featured
@@ -713,9 +719,10 @@ class BP_Group_Documents {
      * @version 1.2.2
      */
     public static function get_list_for_popular_widget($num, $group_filter = 0, $featured = 0) {
-        global $wpdb, $bp;
+        global $wpdb;
+	$bp = buddypress();
 
-        if ($group_filter || $featured) {
+	if ($group_filter || $featured) {
             $sql = "SELECT * FROM " . BP_GROUP_DOCUMENTS_TABLE . " WHERE 1=1 ";
             if ($group_filter)
                 $sql .= $wpdb->prepare("AND group_id = %d ", $group_filter);
@@ -733,7 +740,6 @@ class BP_Group_Documents {
     /**
      *
      * @global type $wpdp
-     * @global type $bp
      * @param type $num
      * @param type $featured
      * @return type
@@ -745,9 +751,9 @@ class BP_Group_Documents {
      * @since 0.5
      */
     public static function get_list_for_usergroups_widget($num, $featured = 0) {
-        global $wpdb, $bp;
-        if (bp_has_groups('user_id=' . get_current_user_id())) {
-            while (bp_groups()) : bp_the_group();
+        global $wpdb;
+	if ( bp_has_groups( 'user_id=' . get_current_user_id() ) ) {
+	    while (bp_groups()) : bp_the_group();
                 $group_array[] = bp_get_group_id();
             endwhile;
         }

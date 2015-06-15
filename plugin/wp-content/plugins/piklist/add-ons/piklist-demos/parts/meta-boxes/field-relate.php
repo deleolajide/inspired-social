@@ -22,7 +22,7 @@ Collapse: true
   $related = get_posts(array(
     'post_type' => 'post'
     ,'posts_per_page' => -1
-    ,'post_belongs' => $post_id
+    ,'post_belongs' => $post->ID
     ,'post_status' => 'publish'
     ,'suppress_filters' => false
   ));
@@ -30,7 +30,7 @@ Collapse: true
   if ($related): 
 ?>
 
-    <h4><?php _e('Related Posts', 'piklist');?></h4>
+    <h4><?php _e('Related Posts', 'piklist-demo');?></h4>
 
     <ol>
 

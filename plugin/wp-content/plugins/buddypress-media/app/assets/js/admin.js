@@ -58,30 +58,82 @@ jQuery(document).ready(function($) {
 
     /* Submit Request */
 
-    jQuery('#bp-media-settings-boxes').on('submit', '#bp_media_settings_form,#rtmedia-settings-submit', function(e) {
+    jQuery( '#bp-media-settings-boxes' ).on( 'submit', '#bp_media_settings_form, #rtmedia-settings-submit', function( e ) {
         var return_code = true;
-        var reg = new RegExp('^auto$|^[+-]?[0-9]+\\.?([0-9]+)?(px|em|ex|%|in|cm|mm|pt|pc)?$');
-        jQuery("input[name*='defaultSizes']").each(function(el) {
-            if (!reg.test(jQuery(this).val())) {
-                alert("Invalid value for " + jQuery(this).attr('name').replace('rtmedia-options[', '').replace(']', '').replace(/_/g, ' '));
+        var reg = new RegExp( '^[0-9]+$' );
+
+        jQuery( "input[name*='defaultSizes']" ).each( function( el ) {
+            if ( !reg.test( jQuery( this ).val() ) ) {
+                alert( "Invalid value for " + jQuery( this ).attr( 'name' ).replace( 'rtmedia-options[defaultSizes_', '' ).replace( ']', '' ).replace( /_/g, ' ').replace( /(\b)([a-zA-Z] )/g, function( firstLetter ) { return firstLetter.toUpperCase(); } ) );
                 return_code = false;
                 return false;
             }
+        } );
 
-        });
-	var general_videothumb = jQuery('input[name^="rtmedia-options[general_videothumbs]"]');
-	if( return_code && typeof general_videothumb != "undefined" ) {
-	    if( general_videothumb.val() <= 0 ) {
-		alert("Number of video thumbnails to be generated should be greater than 0 in image sizes settings. ");
-		return_code = false;
+	    var general_videothumb = jQuery( 'input[name^="rtmedia-options[general_videothumbs]"]' );
+        if( return_code && general_videothumb.length > 0 && typeof general_videothumb != "undefined" ) {
+            var error_msg = "";
+            var general_videothumb_val = 0;
+            if( general_videothumb.val() <= 0 ) {
+                error_msg += "Number of video thumbnails to be generated should be greater than 0 in image sizes settings. Setting it to default value 2.";
+                general_videothumb_val = 2;
+            } else if( !reg.test( general_videothumb.val() ) ) {
+                error_msg += 'Invalid value for Number of video thumbnails in image sizes settings. Setting it to round value ' + Math.round( general_videothumb.val() ) + ".";
+                general_videothumb_val = Math.round( general_videothumb.val() );
+            }
+            if( error_msg != "" ) {
+                alert( error_msg );
+                general_videothumb.val( general_videothumb_val );
+                return_code = false;
                 return false;
+            }
 	    }
-	}
-        if (!return_code) {
-            e.preventDefault();
+        
+        var general_jpeg_image_quality = jQuery( 'input[name^="rtmedia-options[general_jpeg_image_quality]"]' );
+        if( return_code && general_jpeg_image_quality.length > 0 && typeof general_jpeg_image_quality != "undefined" ) {
+            var error_msg = "";
+            var general_jpeg_image_quality_val = 0;
+            if( general_jpeg_image_quality.val() <= 0 ) {
+                error_msg += "Number of percentage in JPEG image quality should be greater than 0 in image sizes settings. Setting it to default value 90.";
+                general_jpeg_image_quality_val = 90;
+            } else if( general_jpeg_image_quality.val() > 100 ) {
+                error_msg += "Number of percentage in JPEG image quality should be less than 100 in image sizes settings. Setting it to 100.";
+                general_jpeg_image_quality_val = 100;
+            } else if( !reg.test( general_jpeg_image_quality.val() ) ) {
+                error_msg += 'Invalid value for percentage in JPEG image quality in image sizes settings. Setting it to round value ' + Math.round( general_jpeg_image_quality.val() ) + ".";
+                general_jpeg_image_quality_val = Math.round( general_jpeg_image_quality.val() );
+            }
+            if( error_msg != "" ) {
+                alert( error_msg );
+                general_jpeg_image_quality.val( general_jpeg_image_quality_val );
+                return_code = false;
+                return false;
+            }
+	    }
+
+        var general_perPageMedia = jQuery( 'input[name^="rtmedia-options[general_perPageMedia]"]' );
+        if( return_code && general_perPageMedia.length > 0 && typeof general_perPageMedia != "undefined" ) {
+            var error_msg = "";
+            var general_perPageMedia_val = 0;
+            if( general_perPageMedia.val() < 1 ) {
+                error_msg += "Please enter positive integer value only. Setting number of media per page value to default value 10.";
+                general_perPageMedia_val = 10;
+            } else if( jQuery.isNumeric( general_perPageMedia.val() ) && ( Math.floor( general_perPageMedia.val() ) != general_perPageMedia.val() ) ) {
+                error_msg += "Please enter positive integer value only. Setting number of media per page value to round value " + Math.round( general_perPageMedia.val() ) + ".";
+                general_perPageMedia_val = Math.round( general_perPageMedia.val() );
+            }
+            if( error_msg != "" ){
+                alert( error_msg );
+                general_perPageMedia.val( general_perPageMedia_val );
+                return_code = false;
+                return false;
+            }
         }
 
-    });
+        if ( !return_code ) {
+            e.preventDefault();
+        }
+    } );
 
     jQuery(document).on('click', "#bpm-services .encoding-try-now,#rtm-services .encoding-try-now", function(e) {
         e.preventDefault();
@@ -107,32 +159,41 @@ jQuery(document).ready(function($) {
         }
     });
 
-    jQuery(document).on('click', '#api-key-submit', function(e) {
+    jQuery( document ).on( 'click', '#api-key-submit', function( e ) {
         e.preventDefault();
-        jQuery(this).after('<img style="margin: 0 0 0 10px" src="' + rtmedia_admin_url + 'images/wpspin_light.gif" />')
+        
+        if( jQuery( this ).next( 'img' ).length == 0 ) {
+            jQuery( this ).after( '<img style="margin: 0 0 0 10px" src="' + rtmedia_admin_url + 'images/wpspin_light.gif" />' );
+        }
+        
         var data = {
             action: 'rtmedia_enter_api_key',
-            apikey: jQuery('#new-api-key').val()
+            apikey: jQuery( '#new-api-key' ).val()
         };
 
         // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-        jQuery.getJSON(ajaxurl, data, function(response) {
-            if (response.error === undefined && response.apikey) {
+        jQuery.getJSON( ajaxurl, data, function( response ) {
+            if ( response.error === undefined && response.apikey ) {
                 var tempUrl = window.location.href;
                 var hash = window.location.hash;
-                tempUrl = tempUrl.replace(hash, '');
-                if (tempUrl.toString().indexOf('&apikey=' + response.apikey) == -1)
+                tempUrl = tempUrl.replace( hash, '' );
+                
+                if ( tempUrl.toString().indexOf( '&apikey=' + response.apikey ) == -1 ) {
                     tempUrl += '&apikey=' + response.apikey;
-                if (tempUrl.toString().indexOf('&update=true') == -1)
+                }
+                if ( tempUrl.toString().indexOf( '&update=true' ) == -1 ) {
                     tempUrl += '&update=true';
+                }
+                
                 document.location.href = tempUrl + hash;
-
             } else {
-                jQuery('#settings-error-api-key-error').remove();
-                jQuery('h2:first').after('<div class="error" id="settings-error-api-key-error"><p>' + response.error + '</p></div>');
+                jQuery( '#settings-error-api-key-error' ).remove();
+                jQuery( 'h2:first' ).after( '<div class="error" id="settings-error-api-key-error"><p>' + response.error + '</p></div>' );
             }
-        });
-    });
+            
+            jQuery( '#api-key-submit' ).next( 'img' ).remove();
+        } );
+    } );
 
     jQuery(document).on('click', '#disable-encoding', function(e) {
         e.preventDefault();
@@ -145,12 +206,18 @@ jQuery(document).ready(function($) {
             // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
             jQuery.post(ajaxurl, data, function(response) {
                 if (response) {
-                    jQuery('settings-error-encoding-disabled').remove();
-                    jQuery('h2:first').after('<div class="updated" id="settings-encoding-successfully-disabled"><p>' + response + '</p></div>');
-                    jQuery('#bp-media-encoding-usage').remove();
-                    jQuery('#disable-encoding').next().remove();
-                    jQuery('#disable-encoding').remove();
-                    jQuery('#new-api-key').val('');
+                    jQuery('.settings-error-encoding-disabled').remove();
+
+	                if( jQuery( '#settings-encoding-successfully-updated' ).length > 0 ){
+		                jQuery( '#settings-encoding-successfully-updated p' ).html( response );
+                    } else {
+		                jQuery('h2:first').after('<div class="updated" id="settings-encoding-successfully-updated"><p>' + response + '</p></div>');
+	                }
+
+                    jQuery('#rtmedia-encoding-usage').hide();
+	                jQuery('#disable-encoding').next( 'img' ).remove();
+                    jQuery('#disable-encoding').hide();
+                    jQuery('#enable-encoding').show();
                 } else {
                     jQuery('#settings-error-encoding-disabled').remove();
                     jQuery('h2:first').after('<div class="error" id="settings-error-encoding-disabled"><p>' + rtmedia_admin_strings.something_went_wrong + '</p></div>');
@@ -158,6 +225,34 @@ jQuery(document).ready(function($) {
             });
         }
     });
+
+	jQuery(document).on('click', '#enable-encoding', function(e) {
+		e.preventDefault();
+		if (confirm(rtmedia_admin_strings.enable_encoding)) {
+			jQuery(this).after('<img style="margin: 0 0 0 10px" src="' + rtmedia_admin_url + 'images/wpspin_light.gif" />')
+			var data = {
+				action: 'rtmedia_enable_encoding'
+			};
+			jQuery.post(ajaxurl, data, function(response) {
+				if (response) {
+					jQuery('.settings-error-encoding-enabled').remove();
+
+					if( jQuery( '#settings-encoding-successfully-updated' ).length > 0 ){
+						jQuery( '#settings-encoding-successfully-updated p' ).html( response );
+					} else {
+						jQuery('h2:first').after('<div class="updated" id="settings-encoding-successfully-updated"><p>' + response + '</p></div>');
+					}
+
+					jQuery('#enable-encoding').next( 'img' ).remove();
+					jQuery('#enable-encoding').hide();
+					jQuery('#disable-encoding').show();
+				} else {
+					jQuery('#settings-error-encoding-disabled').remove();
+					jQuery('h2:first').after('<div class="error" id="settings-error-encoding-enabled"><p>' + rtmedia_admin_strings.something_went_wrong + '</p></div>');
+				}
+			});
+		}
+	});
 
     jQuery('.bp-media-encoding-table').on('click', '.bpm-unsubscribe', function(e) {
         e.preventDefault();
@@ -552,13 +647,6 @@ jQuery(document).ready(function($) {
         if ($('#tab-' + hash.substr(1, hash.length)).length < 1)
             return 1;
         return $('#tab-' + hash.substr(1, hash.length)).parent().index() + 1;
-    }
-
-    function rtmediaGetParameterByName(name) {
-        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(location.search);
-        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
     jQuery('#rtmedia-submit-request').click(function(){

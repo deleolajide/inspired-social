@@ -332,8 +332,8 @@ class BBP_Forums_Group_Extension extends BP_Group_Extension {
 
 		// Theme-side Nonce check
 		} elseif ( ! bbp_verify_nonce_request( 'groups_edit_save_' . $this->slug ) ) {
-			bbp_add_error( 'bbp_edit_group_forum_screen_save', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-			return;
+			//bbp_add_error( 'bbp_edit_group_forum_screen_save', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+			//return;
  		}
 
 		$edit_forum = !empty( $_POST['bbp-edit-group-forum'] ) ? true : false;
@@ -491,8 +491,8 @@ class BBP_Forums_Group_Extension extends BP_Group_Extension {
 
 		// Nonce check
 		if ( ! bbp_verify_nonce_request( 'groups_create_save_' . $this->slug ) ) {
-			bbp_add_error( 'bbp_create_group_forum_screen_save', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-			return;
+			//bbp_add_error( 'bbp_create_group_forum_screen_save', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+			//return;
 		}
 
 		// Check for possibly empty group_id

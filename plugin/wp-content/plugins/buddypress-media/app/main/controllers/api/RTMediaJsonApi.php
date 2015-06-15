@@ -949,7 +949,9 @@ class RTMediaJsonApi{
         }else{
             //Process rtmedia_file
             $img = $rtmedia_file;
-            $img = str_replace('data:image/png;base64,', '', $img);
+			$image_type = $_POST['image_type'];
+			$str_replace = 'data:image/'.$image_type.';base64,';
+            $img = str_replace($str_replace, '', $img);
         //    $img = str_replace(' ', '+', $img);
             $rtmedia_file = base64_decode($img);
             if( !$rtmedia_file ){
@@ -975,12 +977,12 @@ class RTMediaJsonApi{
             }
             $uploaded['rtmedia_upload_nonce'] =  wp_create_nonce ( 'rtmedia_upload_nonce' );
             $uploaded['rtmedia_simple_file_upload'] =   1;
-            $uploaded['context'] = 'profile';
-            $uploaded['context_id'] = $this->user_id;
+	        $uploaded['context'] = !empty($_POST['context']) ? $_POST['context'] : 'profile';
+	        $uploaded['context_id'] = !empty($_POST['context_id']) ? $_POST['context_id'] : $this->user_id;
             $uploaded['mode'] = 'file_upload';
             $uploaded['media_author'] = $this->user_id;
-            $uploaded['album_id'] = $this->user_id;
-            $uploaded['privacy'] = 0;
+            $uploaded['album_id'] = !empty($_POST['album_id']) ? $_POST['album_id'] : RTMediaAlbum::get_default();
+            $uploaded['privacy'] = !empty($_POST['privacy']) ? $_POST['privacy'] : get_rtmedia_default_privacy();
             $uploaded['title']  = $title;
             $uploaded['description']    = $description;
             $uploaded['taxonomy'] = array();
@@ -1024,6 +1026,12 @@ class RTMediaJsonApi{
 
                 global $wpdb, $bp;
                 $updated = $wpdb->update ( $bp->activity->table_name, array( "type" => "rtmedia_update", "content" => $objActivity->create_activity_html () ), array( "id" => $activity_id ) );
+
+				// if there is only single media the $updated value will be false even if the value we are passing to check is correct.
+				// So we need to hardcode the $updated to true if there is only single media for same activity
+				if( sizeof( $same_medias ) == 1 && $activity_id ){
+					$updated = true;
+				}
             }
         }
 
@@ -1083,6 +1091,11 @@ class RTMediaJsonApi{
         //context Id
         if(isset($_POST['context_id'])){
             $args['context_id'] = $_REQUEST['context_id'];
+        }
+
+        //album id
+        if(isset($_POST['album_id'])){
+            $args['album_id'] = $_REQUEST['album_id'];
         }
         //Media Author
         $media_author = '';

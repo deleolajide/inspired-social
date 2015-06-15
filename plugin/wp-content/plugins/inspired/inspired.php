@@ -79,11 +79,14 @@ function inspired_user_page()
 }
 
 
-function inspired_login_ok($username)
+function inspired_login_ok($username, $user, $password)
 {
 	global $openfire;
 	$openfire->of_logInfo("inspired_login_ok " . $username);
 	$openfire->of_set_user_session($username);
+
+	$openfire->of_logInfo("LOGIN FOUND USER... " . $username);
+	$openfire->of_logInfo("LOGIN FOUND PASS... " . $password);
 }
 
 

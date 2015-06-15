@@ -14,5 +14,3 @@ Order: 410
       'true' => 'Disable'
     )
   ));
-
-?>

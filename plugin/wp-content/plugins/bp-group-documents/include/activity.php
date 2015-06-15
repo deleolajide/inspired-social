@@ -9,7 +9,7 @@ if (!defined('ABSPATH'))
  * records the creation of a new document: [user] uploaded the file [name] to [group]
  */
 function bp_group_documents_record_add($document) {
-    global $bp;
+    $bp = buddypress();
 
     $params = array('action' => sprintf(__('%s uploaded the file: %s to %s', 'bp-group-documents'), bp_core_get_userlink($bp->loggedin_user->id), '<a href="' . $document->get_url() . '">' . esc_attr($document->name) . '</a>', '<a href="' . bp_get_group_permalink($bp->groups->current_group) . '">' . esc_attr($bp->groups->current_group->name) . '</a>'),
         'content' => $document->description,
@@ -25,11 +25,11 @@ add_action('bp_group_documents_add_success', 'bp_group_documents_record_add', 15
 
 /**
  * bp_group_documents_record_edit()
- * 
+ *
  * records the modification of a document: "[user] edited the file [name] in [group]"
  */
 function bp_group_documents_record_edit($document) {
-    global $bp;
+    $bp = buddypress();
 
     $params = array('action' => sprintf(__('%s edited the file: %s in %s', 'bp-group-documents'), bp_core_get_userlink($bp->loggedin_user->id), '<a href="' . $document->get_url() . '">' . esc_attr($document->name) . '</a>', '<a href="' . bp_get_group_permalink($bp->groups->current_group) . '">' . esc_attr($bp->groups->current_group->name) . '</a>'),
         'component_action' => 'edited_group_document',
@@ -48,7 +48,7 @@ add_action('bp_group_documents_edit_success', 'bp_group_documents_record_edit', 
  */
 
 function bp_group_documents_record_delete($document) {
-    global $bp;
+    $bp = buddypress();
 
     $params = array('action' => sprintf(__('%s deleted the file: %s from %s', 'bp-group-documents'), bp_core_get_userlink($bp->loggedin_user->id), $document->name, '<a href="' . bp_get_group_permalink($bp->groups->current_group) . '">' . esc_attr($bp->groups->current_group->name) . '</a>'),
         'component_action' => 'deleted_group_document',
@@ -66,7 +66,7 @@ add_action('bp_group_documents_delete_success', 'bp_group_documents_record_delet
  * and edit activity items.
  */
 function bp_group_documents_record_activity($args = '') {
-    global $bp;
+    $bp = buddypress();
 
     if (!function_exists('bp_activity_add'))
         return false;
@@ -77,7 +77,7 @@ function bp_group_documents_record_activity($args = '') {
         'component_name' => 'groups',
         'component_action' => false,
         'hide_sitewide' => false, // Optional
-        'user_id' => $bp->loggedin_user->id, // Optional		
+        'user_id' => $bp->loggedin_user->id, // Optional
         'item_id' => $bp->groups->current_group->id, // Optional
         'secondary_item_id' => false, // Optional
     );
@@ -117,7 +117,7 @@ add_action('bp_group_documents_delete_with_group', 'bp_group_documents_delete_ac
  * if soemthing is deleted.
  */
 function bp_group_documents_delete_activity($args = true) {
-    global $bp;
+    $bp = buddypress();
 
     if (function_exists('bp_activity_delete_by_item_id')) {
         $defaults = array(
@@ -142,13 +142,13 @@ function bp_group_documents_delete_activity($args = true) {
 }
 
 /**
- * 
+ *
  *  Add Buddypress Groups Documents activity types to the activity filter dropdown
  *  @since 0.4.3
  * @version 1.5, 4/12/2013, stergatu, chanced name in order to avoid conficts with other plugins
  */
 function bp_group_documents_activity_filter_options() {
-    global $bp;
+    $bp = buddypress();
     $nav_page_name = get_option('bp_group_documents_nav_page_name');
     $name = !empty($nav_page_name) ? $nav_page_name : __('Documents', 'bp-group-documents');
     ?>

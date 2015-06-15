@@ -1,6 +1,5 @@
 /*
 @version 2, 1/5/2013, stergatu*/
-
 #bp-group-documents,
 #bp-group-documents div#message.info {
     margin-top: 30px;
@@ -61,11 +60,9 @@ a.bp-group-documents-icon{
     color: #848484;
     font-size: 90%;
 }
-
 li#nav-documents-groups-li,li#nav-documents-personal-li {
    background: url(../images/documents-stack_16x16.png) no-repeat 87% 52%;
 }
-
 .bp_group_documents_question{
 border:solid 1px #DEDEDE;
 background:#FFFFCC url(../images/question-red_16x16.png) 8px 6px no-repeat;

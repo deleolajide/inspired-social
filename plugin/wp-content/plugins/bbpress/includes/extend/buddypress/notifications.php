@@ -123,7 +123,7 @@ function bbp_buddypress_add_notification( $reply_id = 0, $topic_id = 0, $forum_i
 
 		bp_notifications_add_notification( $args );
  	}
- 
+
  	// Notify the immediate reply author if not the current reply author
  	if ( !empty( $reply_to ) && ( $author_id !== $reply_to_item_id ) ) {
 		$args['secondary_item_id'] = $reply_to_item_id ;
@@ -158,7 +158,7 @@ function bbp_buddypress_mark_notifications( $action = '' ) {
 
 	// Check nonce
 	if ( ! bbp_verify_nonce_request( 'bbp_mark_topic_' . $topic_id ) ) {
-		bbp_add_error( 'bbp_notification_topic_id', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//bbp_add_error( 'bbp_notification_topic_id', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
 
 	// Check current user's ability to edit the user
 	} elseif ( !current_user_can( 'edit_user', $user_id ) ) {

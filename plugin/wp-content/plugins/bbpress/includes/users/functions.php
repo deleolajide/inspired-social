@@ -456,7 +456,7 @@ function bbp_favorites_handler( $action = '' ) {
 
 	// Check nonce
 	} elseif ( ! bbp_verify_nonce_request( 'toggle-favorite_' . $topic_id ) ) {
-		bbp_add_error( 'bbp_favorite_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+//		bbp_add_error( 'bbp_favorite_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
 
 	// Check current user's ability to edit the user
 	} elseif ( !current_user_can( 'edit_user', $user_id ) ) {
@@ -1171,7 +1171,7 @@ function bbp_forum_subscriptions_handler( $action = '' ) {
 
 	// Check nonce
 	} elseif ( ! bbp_verify_nonce_request( 'toggle-subscription_' . $forum_id ) ) {
-		bbp_add_error( 'bbp_subscription_forum_id', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//bbp_add_error( 'bbp_subscription_forum_id', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
 
 	// Check current user's ability to edit the user
 	} elseif ( !current_user_can( 'edit_user', $user_id ) ) {
@@ -1277,7 +1277,7 @@ function bbp_subscriptions_handler( $action = '' ) {
 
 	// Check nonce
 	} elseif ( ! bbp_verify_nonce_request( 'toggle-subscription_' . $topic_id ) ) {
-		bbp_add_error( 'bbp_subscription_topic_id', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//bbp_add_error( 'bbp_subscription_topic_id', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
 
 	// Check current user's ability to edit the user
 	} elseif ( !current_user_can( 'edit_user', $user_id ) ) {
@@ -1377,7 +1377,7 @@ function bbp_edit_user_handler( $action = '' ) {
 
 		$new_email = get_option( $user_id . '_new_email' );
 
-		if ( $new_email['hash'] === $_GET['newuseremail'] ) {
+		if ( hash_equals( $new_email['hash'], $_GET['newuseremail'] ) ) {
 			$user             = new WP_User();
 			$user->ID         = $user_id;
 			$user->user_email = esc_html( trim( $new_email['newemail'] ) );
@@ -1404,13 +1404,13 @@ function bbp_edit_user_handler( $action = '' ) {
 
 	// Nonce check
 	if ( ! bbp_verify_nonce_request( 'update-user_' . $user_id ) ) {
-		bbp_add_error( 'bbp_update_user_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//bbp_add_error( 'bbp_update_user_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
 		return;
 	}
 
 	// Cap check
 	if ( ! current_user_can( 'edit_user', $user_id ) ) {
-		bbp_add_error( 'bbp_update_user_capability', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//bbp_add_error( 'bbp_update_user_capability', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
 		return;
 	}
 
