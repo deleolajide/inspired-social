@@ -1,16 +1,18 @@
 <?php
 
 /**
- * BuddyPress Blogs Streams Loader
+ * BuddyPress Blogs Loader
  *
- * An blogs stream component, for users, groups, and blog tracking.
+ * The blogs component tracks posts and comments to member activity streams,
+ * shows blogs the member can post to in their profiles, and caches useful
+ * information from those blogs to make querying blogs in bulk more performant.
  *
  * @package BuddyPress
  * @subpackage Blogs Core
  */
 
 // Exit if accessed directly
-if ( !defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 class BP_Blogs_Component extends BP_Component {
 
@@ -22,7 +24,7 @@ class BP_Blogs_Component extends BP_Component {
 	public function __construct() {
 		parent::start(
 			'blogs',
-			__( 'Site Tracking', 'buddypress' ),
+			__( 'Site Directory', 'buddypress' ),
 			buddypress()->plugin_dir,
 			array(
 				'adminbar_myaccount_order' => 30
@@ -45,8 +47,9 @@ class BP_Blogs_Component extends BP_Component {
 	public function setup_globals( $args = array() ) {
 		$bp = buddypress();
 
-		if ( !defined( 'BP_BLOGS_SLUG' ) )
+		if ( ! defined( 'BP_BLOGS_SLUG' ) ) {
 			define ( 'BP_BLOGS_SLUG', $this->id );
+		}
 
 		// Global tables for messaging component
 		$global_tables = array(
@@ -58,12 +61,12 @@ class BP_Blogs_Component extends BP_Component {
 			'blog' => $bp->table_prefix . 'bp_user_blogs_blogmeta',
 		);
 
-		// All globals for messaging component.
-		// Note that global_tables is included in this array.
+		// All globals for blogs component.
 		$args = array(
 			'slug'                  => BP_BLOGS_SLUG,
 			'root_slug'             => isset( $bp->pages->blogs->slug ) ? $bp->pages->blogs->slug : BP_BLOGS_SLUG,
 			'has_directory'         => is_multisite(), // Non-multisite installs don't need a top-level Sites directory, since there's only one site
+			'directory_title'       => _x( 'Sites', 'component directory title', 'buddypress' ),
 			'notification_callback' => 'bp_blogs_format_notifications',
 			'search_string'         => __( 'Search sites...', 'buddypress' ),
 			'autocomplete_all'      => defined( 'BP_MESSAGES_AUTOCOMPLETE_ALL' ),
@@ -73,6 +76,31 @@ class BP_Blogs_Component extends BP_Component {
 
 		// Setup the globals
 		parent::setup_globals( $args );
+
+		/*
+		 * Set up the post post type to track.
+		 *
+		 * In case the config is not multisite, the blog_public option is ignored.
+		 */
+		if ( 0 !== apply_filters( 'bp_is_blog_public', (int) get_option( 'blog_public' ) ) || ! is_multisite() ) {
+
+			/**
+			 * Filters the post types to track for the Blogs component.
+			 *
+			 * @since BuddyPress (1.5.0)
+			 * @deprecated BuddyPress (2.3.0)
+			 *
+			 * @param array $value Array of post types to track.
+			 */
+			$post_types = apply_filters( 'bp_blogs_record_post_post_types', array( 'post' ) );
+
+			foreach ( $post_types as $post_type ) {
+				add_post_type_support( $post_type, 'buddypress-activity' );
+			}
+		}
+
+		// Filter the generic track parameters for the 'post' post type.
+		add_filter( 'bp_activity_get_post_type_tracking_args', array( $this, 'post_tracking_args' ), 10, 2 );
 	}
 
 	/**
@@ -83,6 +111,7 @@ class BP_Blogs_Component extends BP_Component {
 	 * @param array $includes See {@link BP_Component::includes()}.
 	 */
 	public function includes( $includes = array() ) {
+
 		// Files to include
 		$includes = array(
 			'cache',
@@ -93,11 +122,11 @@ class BP_Blogs_Component extends BP_Component {
 			'filters',
 			'activity',
 			'functions',
-			'buddybar'
 		);
 
-		if ( is_multisite() )
+		if ( is_multisite() ) {
 			$includes[] = 'widgets';
+		}
 
 		// Include the files
 		parent::includes( $includes );
@@ -121,12 +150,16 @@ class BP_Blogs_Component extends BP_Component {
 		 * Although comments and posts made by users will still show on their
 		 * activity stream.
 		 */
-		if ( !is_multisite() )
+		if ( ! is_multisite() ) {
 			return false;
+		}
 
 		// Add 'Sites' to the main navigation
-		$main_nav =  array(
-			'name'                => sprintf( __( 'Sites <span>%d</span>', 'buddypress' ), bp_blogs_total_blogs_for_user() ),
+		$count    = (int) bp_get_total_blog_count_for_user();
+		$class    = ( 0 === $count ) ? 'no-count' : 'count';
+		$nav_text = sprintf( __( 'Sites <span class="%s">%s</span>', 'buddypress' ), esc_attr( $class ), number_format_i18n( $count )  );
+		$main_nav = array(
+			'name'                => $nav_text,
 			'slug'                => $this->slug,
 			'position'            => 30,
 			'screen_function'     => 'bp_blogs_screen_my_blogs',
@@ -173,11 +206,12 @@ class BP_Blogs_Component extends BP_Component {
 
 		/**
 		 * Site/post/comment menus should not appear on single WordPress setups.
-		 * Although comments and posts made by users will still show on their
-		 * activity stream.
+		 *
+		 * Comments and posts made by users will still show in their activity.
 		 */
-		if ( !is_multisite() )
+		if ( ! is_multisite() ) {
 			return false;
+		}
 
 		// Menus for logged in user
 		if ( is_user_logged_in() ) {
@@ -240,6 +274,60 @@ class BP_Blogs_Component extends BP_Component {
 		}
 
 		parent::setup_title();
+	}
+
+	/**
+	 * Setup cache groups
+	 *
+	 * @since BuddyPress (2.2.0)
+	 */
+	public function setup_cache_groups() {
+
+		// Global groups
+		wp_cache_add_global_groups( array(
+			'blog_meta'
+		) );
+
+		parent::setup_cache_groups();
+	}
+
+	/**
+	 * Set up the tracking arguments for the 'post' post type.
+	 *
+	 * @since BuddyPress (2.2.0)
+	 *
+	 * @see bp_activity_get_post_type_tracking_args() for information on parameters.
+	 */
+	public function post_tracking_args( $params = null, $post_type = 0 ) {
+		/**
+		 * Filters the post types to track for the Blogs component.
+		 *
+		 * @since BuddyPress (1.5.0)
+		 * @deprecated BuddyPress (2.3.0)
+		 *
+		 * Make sure plugins still using 'bp_blogs_record_post_post_types'
+		 * to track their post types will generate new_blog_post activities
+		 * See https://buddypress.trac.wordpress.org/ticket/6306
+		 *
+		 * @param array $value Array of post types to track.
+		 */
+		$post_types = apply_filters( 'bp_blogs_record_post_post_types', array( 'post' ) );
+		$post_types_array = array_flip( $post_types );
+
+		if ( ! isset( $post_types_array[ $post_type ] ) ) {
+			return $params;
+		}
+
+		// Set specific params for the 'post' post type.
+		$params->component_id    = $this->id;
+		$params->action_id       = 'new_blog_post';
+		$params->admin_filter    = __( 'New post published', 'buddypress' );
+		$params->format_callback = 'bp_blogs_format_activity_action_new_blog_post';
+		$params->front_filter    = __( 'Posts', 'buddypress' );
+		$params->contexts        = array( 'activity', 'member' );
+		$params->position        = 5;
+
+		return $params;
 	}
 }
 

@@ -11,7 +11,7 @@ if (!defined('ABSPATH'))
  * @version 2 7/3/2013 stergatu, replaced hardcoded plugin directory with BP_GROUP_DOCUMENTS_DIR
  */
 function bp_group_documents_front_cssjs() {
-    global $bp;
+    $bp = buddypress();
 
     //if we're on a group page
     if ($bp->current_component == $bp->groups->slug) {

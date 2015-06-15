@@ -1,7 +1,7 @@
 <?php
 /*
 Title: Taxonomies
-Post Type: piklist_demo
+Post Type: piklist_demo,piklist_lite_demo
 Order: 20
 Priority: default
 Context: side
@@ -10,13 +10,13 @@ Collapse: true
 ?>
 
 <h3 class="demo-highlight">
-  <?php _e('Create your own Taxonomy metabox, and display the terms as a checkbox, radio, select or any field you can imagine.','piklist');?>
+  <?php _e('Create your own Taxonomy metabox, and display the terms as a checkbox, radio, select or any field you can imagine.','piklist-demo');?>
 </h3>
 
 <?php
 
   piklist('field', array(
-    'type' => 'checkbox'
+    'type' => 'radio'
     ,'scope' => 'taxonomy'
     ,'field' => 'piklist_demo_type'
     ,'label' => 'Demo Types'

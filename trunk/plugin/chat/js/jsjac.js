@@ -4329,83 +4329,86 @@ JSJaCHttpBindingConnection.prototype._suspend = function() {
 function JSJaCOpenfireWSConnection(oArg) {
   this.base = JSJaCConnection;
   this.base(oArg);
-  this._ws = null;
-  
   this.registerHandler('onerror', JSJaC.bind(this._cleanupWebSocket, this));
 }
 
 JSJaCOpenfireWSConnection.prototype = new JSJaCConnection();
 
-JSJaCOpenfireWSConnection.prototype._cleanupWebSocket = function() {
-  if (this._ws !== null) {
-    this._ws.onclose = null;
-    this._ws.onerror = null;
-    this._ws.onopen = null;
-    this._ws.onmessage = null;
-
-    this._ws.close();
-    this._ws = null;
-  }
+JSJaCOpenfireWSConnection.prototype._cleanupWebSocket = function() 
+{
+	this._conn.disconnect();
 };
 
 JSJaCOpenfireWSConnection.prototype.connect = function(oArg) {
-  this._setStatus('connecting');
+	this._setStatus('connecting');
 
-  this.domain = oArg.domain || 'localhost';
-  this.username = oArg.username;
-  this.resource = oArg.resource;
-  this.pass = oArg.pass;
-  this.register = oArg.register;
+	this.domain = oArg.domain || 'localhost';
+	this.username = oArg.username;
+	this.resource = oArg.resource;
+	this.pass = oArg.pass;
+	this.register = oArg.register;
 
-  this.authhost = oArg.authhost || this.domain;
-  this.authtype = oArg.authtype || 'sasl';
+	this.authhost = oArg.authhost || this.domain;
+	this.authtype = oArg.authtype || 'sasl';
 
-  this.jid = this.username + '@' + this.domain;
-  this.fulljid = this.jid + '/' + this.resource;
-
-  if (!window.WebSocket) 
-  {
-	window.WebSocket = window.MozWebSocket;
-  }
+	this.jid = this.username + '@' + this.domain;
+	this.fulljid = this.jid + '/' + this.resource;
+	this.host = window.location.host;
 	
-  this.protocol = window.location.protocol == "http:" ? "ws:" : "wss:"
-  this.host = window.location.host;
-  this._httpbase = this.protocol + "//" + this.host + "/ws/server?username=" + this.username + "&password=" + this.pass + "&resource=" + this.resource; 
-  this._ws = new window.WebSocket(this._httpbase, 'xmpp');
-  this._ws.onclose = JSJaC.bind(this._onclose, this);
-  this._ws.onerror = JSJaC.bind(this._onerror, this);
-  this._ws.onopen = JSJaC.bind(this._onopen, this);
-  this._ws.onmessage = JSJaC.bind(this._onmessage, this);
-  
-};
+	var _this = this;
 
-/**
- * @private
- */
-JSJaCOpenfireWSConnection.prototype._onopen = function() {
+	$(document).bind('ofmeet.media.obtained', function ()
+	{		
+		console.log("ofmeet.media.obtained");			
+	});		
+		
+	$(document).bind('ofmeet.connected', function (event, connection)
+	{
+		console.log("ofmeet connected", connection);
 
-  	window.openfireWebSocket = this._ws;
-  	
-  	this._connected = true;	
-  	this._handleEvent('onconnect');  
-  	
-	this.interval = setInterval (function() {window.openfireWebSocket.send(" ")}, 10000 );  	
+		connection.rawOutput = function (data) 
+		{ 
+			//console.log('SEND: ' + data); 
+		};		
+		connection.rawInput = function (data) 
+		{
+			//console.log('RECV: ' + data);
+			_this._onmessage({data: data}); 
+		};
+		
+		_this._conn = connection;
+  		_this._connected = true;	
+  		_this._handleEvent('onconnect');
+  		
+		ofmeet.visible(false);  		
+	});
+	
+			
+	$(document).bind('ofmeet.ready', function ()
+	{
+		console.log("ofmeet.ready");
+		ofmeet.connect();					
+	});
+
+	ofmeet.username = this.username;
+	ofmeet.resource = this.username;	
+  	ofmeet.ready(this.username, this.pass, true); 	
 };
 
 
 JSJaCOpenfireWSConnection.prototype.disconnect = function() {
-  this._setStatus('disconnecting');
+	  this._setStatus('disconnecting');
 
-  if (!this.connected()) {
-    return;
-  }
-  this._connected = false;
+	  if (!this.connected()) {
+	    return;
+	  }
+	  this._connected = false;
 
-  this.oDbg.log('Disconnecting', 4);
-  this._cleanupWebSocket();
+	  this.oDbg.log('Disconnecting', 4);
+	  this._cleanupWebSocket();
 
-  this.oDbg.log('Disconnected', 2);
-  this._handleEvent('ondisconnect');
+	  this.oDbg.log('Disconnected', 2);
+	  this._handleEvent('ondisconnect');
 };
 
 /**
@@ -4443,10 +4446,9 @@ JSJaCOpenfireWSConnection.prototype._onmessage = function(event) {
   if (!stanza || stanza === '') {
     return;
   }
-
-  // WebSocket works only on modern browsers, so it is safe to assume
-  // that namespaceURI and getElementsByTagNameNS are available.
+  
   node = this._parseXml(stanza);
+  
   if (node.namespaceURI === NS_STREAM && node.localName === 'error') {
     if (node.getElementsByTagNameNS(NS_STREAMS, 'conflict').length > 0) {
       this._setStatus('session-terminate-conflict');
@@ -4518,8 +4520,8 @@ JSJaCOpenfireWSConnection.prototype._getInitialRequestString = function() {
   return reqstr;
 };
 
-JSJaCOpenfireWSConnection.prototype.send = function(packet, cb, arg) {
-  this._ws.onmessage = JSJaC.bind(this._onmessage, this);
+JSJaCOpenfireWSConnection.prototype.send = function(packet, cb, arg) 
+{  
   if (!packet || !packet.pType) {
     this.oDbg.log('no packet: ' + packet, 1);
     return false;
@@ -4542,7 +4544,7 @@ JSJaCOpenfireWSConnection.prototype.send = function(packet, cb, arg) {
   try {
     this._handleEvent(packet.pType() + '_out', packet);
     this._handleEvent('packet_out', packet);
-    this._ws.send(packet.xml());
+    this._conn.sendRaw(packet.xml());
   } catch (e) {
     this.oDbg.log(e.toString(), 1);
     return false;
@@ -4553,7 +4555,7 @@ JSJaCOpenfireWSConnection.prototype.send = function(packet, cb, arg) {
 
 
 JSJaCOpenfireWSConnection.prototype.sendXML = function(xml) {
-    this._ws.send(xml);
+    this._conn.sendRaw(xml);
 };
 
 JSJaCOpenfireWSConnection.prototype.resume = function() {
@@ -4562,18 +4564,5 @@ JSJaCOpenfireWSConnection.prototype.resume = function() {
 
 JSJaCOpenfireWSConnection.prototype.suspend = function() {
   return false; // not supported for websockets
-};
-
-
-/**
- * @private
- */
-JSJaCOpenfireWSConnection.prototype._sendRaw = function(xml, cb, arg) {
-  if (cb) {
-    this._ws.onmessage = JSJaC.bind(cb, this, arg);
-  }
-
-  this._ws.send(xml);
-  return true;
 };
 

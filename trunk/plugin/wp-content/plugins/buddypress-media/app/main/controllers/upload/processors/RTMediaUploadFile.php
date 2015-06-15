@@ -36,6 +36,9 @@ class RTMediaUploadFile {
 	 * core process of upload
 	 */
 	function process() {
+		// hook for before file upload process
+		do_action( 'rtmedia_before_file_upload_process' );
+		
 		include_once( ABSPATH . 'wp-admin/includes/file.php' );
 		include_once( ABSPATH . 'wp-admin/includes/image.php' );
 
@@ -92,11 +95,14 @@ class RTMediaUploadFile {
 				$id                    = $rtmedia_interaction->context->id;
 			}
 		}
-
-		if ( strpos( $upload_dir[ 'path' ], 'rtMedia/' . $rtmedia_upload_prefix ) === false ){
-			$upload_dir[ 'path' ] = trailingslashit( str_replace( $upload_dir[ 'subdir' ], '', $upload_dir[ 'path' ] ) ) . 'rtMedia/' . $rtmedia_upload_prefix . $id . $upload_dir[ 'subdir' ];
-			$upload_dir[ 'url' ]  = trailingslashit( str_replace( $upload_dir[ 'subdir' ], '', $upload_dir[ 'url' ] ) ) . 'rtMedia/' . $rtmedia_upload_prefix . $id . $upload_dir[ 'subdir' ];
+		
+		$rtmedia_folder_name = apply_filters( 'rtmedia_upload_folder_name', 'rtMedia' );
+		 
+		if ( strpos( $upload_dir[ 'path' ], $rtmedia_folder_name . '/' . $rtmedia_upload_prefix ) === false ){
+			$upload_dir[ 'path' ] = trailingslashit( str_replace( $upload_dir[ 'subdir' ], '', $upload_dir[ 'path' ] ) ) . $rtmedia_folder_name . '/' . $rtmedia_upload_prefix . $id . $upload_dir[ 'subdir' ];
+			$upload_dir[ 'url' ]  = trailingslashit( str_replace( $upload_dir[ 'subdir' ], '', $upload_dir[ 'url' ] ) ) . $rtmedia_folder_name . '/' . $rtmedia_upload_prefix . $id . $upload_dir[ 'subdir' ];
 		}
+
 		$upload_dir = apply_filters( "rtmedia_filter_upload_dir", $upload_dir );
 
 		return $upload_dir;
@@ -274,7 +280,7 @@ class RTMediaUploadFile {
 	function exif( $file ) {
 		$file_parts = pathinfo( $file[ 'file' ] );
 		if ( in_array( strtolower( $file_parts[ 'extension' ] ), array( 'jpg', 'jpeg', 'tiff' ) ) ){
-			$exif        = read_exif_data( $file[ 'file' ] );
+			$exif        = @read_exif_data( $file[ 'file' ] );
 			$exif_orient = isset ( $exif[ 'Orientation' ] ) ? $exif[ 'Orientation' ] : 0;
 			$rotateImage = 0;
 

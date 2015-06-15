@@ -17,7 +17,26 @@ Collapse: true
       ,'third' => 'Third Choice'
     )
     ,'attributes' => array(
-      'multiple'
+      'multiple' => 'multiple'
+    )
+    ,'on_post_status' => array(
+      'value' => 'lock'
+    )
+  ));
+  
+  piklist('field', array(
+    'type' => 'select'
+    ,'field' => 'multiselect_add_more'
+    ,'label' => 'Multiselect Add More'
+    ,'value' => 'third'
+    ,'add_more' => true
+    ,'choices' => array(
+      'first' => 'First Choice'
+      ,'second' => 'Second Choice'
+      ,'third' => 'Third Choice'
+    )
+    ,'attributes' => array(
+      'multiple' => 'multiple'
     )
     ,'on_post_status' => array(
       'value' => 'lock'

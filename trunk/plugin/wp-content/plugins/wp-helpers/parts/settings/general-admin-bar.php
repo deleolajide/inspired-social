@@ -40,6 +40,3 @@ Order: 120
       'class' => 'regular-text'
     )
   ));
-
-
-?>

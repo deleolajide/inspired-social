@@ -8,7 +8,7 @@ Order: 605
 
 ?>
 
-  <p><strong>Change the emails sent from WordPress</strong></p>
+  <p>Change the emails sent from WordPress</p>
 
 <?php
 
@@ -29,6 +29,3 @@ Order: 605
       'class' => 'regular-text'
     )
   ));
-
- 
-?>

@@ -35,7 +35,6 @@ class RTMediaTemplate {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_script( 'wp-ajax-response' );
 		wp_enqueue_script( 'rtmedia-image-edit', admin_url( "js/image-edit$suffix.js" ), array( 'jquery', 'json2', 'imgareaselect' ), false, 1 );
-		wp_enqueue_style( 'rtmedia-image-edit', RTMEDIA_URL . 'app/assets/css/image-edit.css' );
 		wp_enqueue_style( 'rtmedia-image-area-select', includes_url( '/js/imgareaselect/imgareaselect.css' ) );
 	}
 
@@ -120,7 +119,12 @@ class RTMediaTemplate {
 							$rtaccount = 0;
 						}
 						//add_action("rtmedia_before_media_gallery",array(&$this,"")) ;
-						if ( isset( $shortcode_attr[ 'attr' ] ) && isset( $shortcode_attr[ 'attr' ][ 'uploader' ] ) && $shortcode_attr[ 'attr' ][ 'uploader' ] == "before" ){
+						$include_uploader = false;
+						if ( isset( $shortcode_attr[ 'attr' ] ) && isset( $shortcode_attr[ 'attr' ][ 'uploader' ] ) ){
+							$include_uploader = $shortcode_attr[ 'attr' ][ 'uploader' ];
+							unset( $shortcode_attr[ 'attr' ][ 'uploader' ] );
+						}
+						if ( $include_uploader == "before" ){
 							echo RTMediaUploadShortcode::pre_render( $shortcode_attr[ 'attr' ] );
 						}
 						echo "<div class='rtmedia_gallery_wrapper'>";
@@ -128,7 +132,7 @@ class RTMediaTemplate {
 						$gallery_template = apply_filters( "rtmedia-before-template", $template, $shortcode_attr );
 						include $this->locate_template( $gallery_template );
 						echo "</div>";
-						if ( isset( $shortcode_attr[ 'attr' ] ) && isset( $shortcode_attr[ 'attr' ][ 'uploader' ] ) && ( $shortcode_attr[ 'attr' ][ 'uploader' ] == "after" || $shortcode_attr[ 'attr' ][ 'uploader' ] == "true" ) ){
+						if ( $include_uploader == "after" || $include_uploader == "true" ){
 							echo RTMediaUploadShortcode::pre_render( $shortcode_attr[ 'attr' ] );
 						}
 					} else {
@@ -172,22 +176,23 @@ class RTMediaTemplate {
 
 	function json_output() {
 		global $rtmedia_query, $rtmedia;
-                $options = $rtmedia->options;
+		$options = $rtmedia->options;
 		$media_array = array();
 		if ( $rtmedia_query->media ){
 			foreach ( $rtmedia_query->media as $key => $media ) {
 				$media_array[ $key ]               = $media;
 				$media_array[ $key ]->guid         = rtmedia_image( 'rt_media_thumbnail', $media->id, false );
 				$media_array[ $key ]->rt_permalink = get_rtmedia_permalink( $media->id );
+				$media_array[ $key ]->duration     = rtmedia_duration( $media->id );
 				$media_array[ $key ] = apply_filters( 'rtmedia_media_array_backbone', $media_array[ $key ] );
 			}
 		}
 		$return_array[ 'data' ] = $media_array;
 		$return_array[ 'prev' ] = rtmedia_page() - 1;
 		$return_array[ 'next' ] = ( rtmedia_offset() + rtmedia_per_page_media() < rtmedia_count() ) ? ( rtmedia_page() + 1 ) : - 1;
-                if( $options[ 'general_display_media' ] == 'pagination' ) {
-                    $return_array ['pagination'] = rtmedia_get_pagination_values();
-                }
+		if( isset( $rtmedia->options['general_display_media'] ) && $options[ 'general_display_media' ] == 'pagination' ) {
+			$return_array ['pagination'] = rtmedia_get_pagination_values();
+		}
 		echo json_encode( $return_array );
 		die;
 	}
@@ -210,6 +215,7 @@ class RTMediaTemplate {
 	}
 
 	function save_single_edit() {
+		add_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_image_sizes_details' ) );
 		global $rtmedia_query;
 		$nonce = $_POST[ 'rtmedia_media_nonce' ];
 		if ( wp_verify_nonce( $nonce, 'rtmedia_' . $rtmedia_query->action_query->id ) ){
@@ -226,6 +232,22 @@ class RTMediaTemplate {
 				$image_meta_data = wp_generate_attachment_metadata( $rtmedia_query->media[ 0 ]->media_id, $image_path );
 				wp_update_attachment_metadata( $rtmedia_query->media[ 0 ]->media_id, $image_meta_data );
 			}
+			if( isset( $_POST[ 'rtmedia-filepath-old' ] ) ) {
+            	$is_valid_url = preg_match( "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $_POST[ 'rtmedia-filepath-old' ] );
+				if( $is_valid_url ) {
+					$thumbnailinfo = wp_get_attachment_image_src( $rtmedia_query->media[ 0 ]->media_id, 'rt_media_activity_image' );
+					$activity_id = rtmedia_activity_id( $rtmedia_query->media[ 0 ]->id );
+
+					if ( $rtmedia_query->media[ 0 ]->media_id && !empty( $activity_id ) ) {
+						global $wpdb;
+						$content = $wpdb->get_var("SELECT content FROM {$wpdb->prefix}bp_activity WHERE id = $activity_id");
+						// Replacing the filename with new effected filename
+						$activity_content = str_replace( $_POST[ 'rtmedia-filepath-old' ], $thumbnailinfo[ 0 ], $content );
+						$wpdb->update($wpdb->prefix . 'bp_activity', array('content' => $activity_content), array('id' => $activity_id));
+					}
+				}
+            }
+                    
 			$state = $media->update( $rtmedia_query->action_query->id, $data, $rtmedia_query->media[ 0 ]->media_id );
 			$rtmedia_query->query( false );
 			global $rtmedia_points_media_id;
@@ -248,6 +270,7 @@ class RTMediaTemplate {
 		} else {
 			_e( 'Ooops !!! Invalid access. No nonce was found !!', 'rtmedia' );
 		}
+		remove_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_image_sizes_details' ) );
 	}
 
 	function media_update_success_messege() {
@@ -269,10 +292,8 @@ class RTMediaTemplate {
 			$media = new RTMediaMedia();
 			$model = new RTMediaModel();
 			if ( isset ( $_POST[ 'submit' ] ) ){
-				$data = $_POST;
-				unset ( $data[ 'rtmedia_media_nonce' ] );
-				unset ( $data[ '_wp_http_referer' ] );
-				unset ( $data[ 'submit' ] );
+				$data_array = array( 'media_title', 'description', 'privacy' );
+				$data       = rtmedia_sanitize_object( $_POST, $data_array );
 				$album = $model->get_media( array( 'id' => $rtmedia_query->media_query[ 'album_id' ] ), false, false );
 				$state = $media->update( $album[ 0 ]->id, $data, $album[ 0 ]->media_id );
 				global $rtmedia_points_media_id;
@@ -300,12 +321,12 @@ class RTMediaTemplate {
 			}
 			//refresh
 			$rtMediaNav = new RTMediaNav();
-			if ( $rtmedia_query->media[ 0 ]->context == "group" ){
-				$rtMediaNav->refresh_counts( $rtmedia_query->media[ 0 ]->context_id, array( "context" => $rtmedia_query->media[ 0 ]->context, 'context_id' => $rtmedia_query->media[ 0 ]->context_id ) );
+			if ( $rtmedia_query->media_query['context'] == "group" ){
+				$rtMediaNav->refresh_counts( $rtmedia_query->media_query['context_id'], array( "context" => $rtmedia_query->media_query['context'], 'context_id' => $rtmedia_query->media_query['context_id'] ) );
 			} else {
-				$rtMediaNav->refresh_counts( $rtmedia_query->media[ 0 ]->media_author, array( "context" => "profile", 'media_author' => $rtmedia_query->media[ 0 ]->media_author ) );
+				$rtMediaNav->refresh_counts( $rtmedia_query->media_query['media_author'], array( "context" => "profile", 'media_author' => $rtmedia_query->media_query['media_author'] ) );
 			}
-			wp_safe_redirect( get_rtmedia_permalink( $rtmedia_query->media_query[ 'album_id' ] ) . 'edit/' );
+			wp_safe_redirect( esc_url_raw( get_rtmedia_permalink( $rtmedia_query->media_query[ 'album_id' ] ) . 'edit/' ) );
 			die();
 		} else {
 			_e( 'Ooops !!! Invalid access. No nonce was found !!', 'rtmedia' );
@@ -344,7 +365,7 @@ class RTMediaTemplate {
 				$media->delete( $id );
 			}
 		}
-		wp_safe_redirect( $_POST[ '_wp_http_referer' ] );
+		wp_safe_redirect( esc_url_raw( $_POST[ '_wp_http_referer' ] ) );
 		die();
 	}
 
@@ -390,7 +411,7 @@ class RTMediaTemplate {
 				}
 			}
 			$redirect_url = apply_filters( 'rtmedia_before_delete_media_redirect', $redirect_url );
-			wp_safe_redirect( $redirect_url );
+			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			die();
 		} else {
 			_e( 'Ooops !!! Invalid access. No nonce was found !!', 'rtmedia' );
@@ -412,9 +433,9 @@ class RTMediaTemplate {
 		if ( isset( $rtmedia_query->media_query[ 'context' ] ) && $rtmedia_query->media_query[ 'context' ] == "group" ){
 			global $bp;
 			$group_link = bp_get_group_permalink( $bp->groups->current_group );
-			wp_safe_redirect( trailingslashit( $group_link ) . RTMEDIA_MEDIA_SLUG . '/album/' );
+			wp_safe_redirect( esc_url_raw( trailingslashit( $group_link ) . RTMEDIA_MEDIA_SLUG . '/album/' ) );
 		} else {
-			wp_safe_redirect( trailingslashit( get_rtmedia_user_link( get_current_user_id() ) ) . RTMEDIA_MEDIA_SLUG . '/album/' );
+			wp_safe_redirect( esc_url_raw( trailingslashit( get_rtmedia_user_link( get_current_user_id() ) ) . RTMEDIA_MEDIA_SLUG . '/album/' ) );
 		}
 		exit;
 	}
@@ -443,9 +464,9 @@ class RTMediaTemplate {
 		if ( isset( $rtmedia_query->media_query[ 'context' ] ) && $rtmedia_query->media_query[ 'context' ] == "group" ){
 			global $bp;
 			$group_link = bp_get_group_permalink( $bp->groups->current_group );
-			wp_safe_redirect( trailingslashit( $group_link ) . RTMEDIA_MEDIA_SLUG . '/album/' );
+			wp_safe_redirect( esc_url_raw( trailingslashit( $group_link ) . RTMEDIA_MEDIA_SLUG . '/album/' ) );
 		} else {
-			wp_safe_redirect( trailingslashit( get_rtmedia_user_link( get_current_user_id() ) ) . RTMEDIA_MEDIA_SLUG . '/album/' );
+			wp_safe_redirect( esc_url_raw( trailingslashit( get_rtmedia_user_link( get_current_user_id() ) ) . RTMEDIA_MEDIA_SLUG . '/album/' ) );
 		}
 		exit;
 	}
@@ -644,6 +665,11 @@ class RTMediaTemplate {
 
 		$context = apply_filters( 'rtmedia_context_filter', $context );
 
+		// check and exit if $template contains relative path
+		if( false !== strpos( $template, '.' ) ){
+			die('No Cheating');
+		}
+
 		$template_name = $template . '.php';
 
 		if ( $context === false ){
@@ -681,5 +707,21 @@ class RTMediaTemplate {
 
 		return $located;
 	}
-
+	
+	/**
+	 * Filters array of rtMedia supported thumbnail sizes
+	 * 
+	 * @param type $sizes
+	 * @return type $sizes
+	 */
+	function filter_image_sizes_details( $sizes ) {
+			global $rtmedia;
+			$sizes = array(
+				'rt_media_thumbnail' => array( "width" => $rtmedia->options[ "defaultSizes_photo_thumbnail_width" ],	"height" => $rtmedia->options[ "defaultSizes_photo_thumbnail_height" ], "crop" => ($rtmedia->options[ "defaultSizes_photo_thumbnail_crop" ] == "0") ? false : true ),
+				'rt_media_activity_image' => array( "width" => $rtmedia->options[ "defaultSizes_photo_medium_width" ], "height" => $rtmedia->options[ "defaultSizes_photo_medium_height" ], "crop" => ($rtmedia->options[ "defaultSizes_photo_medium_crop" ] == "0") ? false : true ),
+				'rt_media_single_image' => array( "width" => $rtmedia->options[ "defaultSizes_photo_large_width" ], "height" => $rtmedia->options[ "defaultSizes_photo_large_height" ], "crop" => ($rtmedia->options[ "defaultSizes_photo_large_crop" ] == "0") ? false : true ),
+				'rt_media_featured_image' => array( "width" => $rtmedia->options[ "defaultSizes_featured_default_width" ], "height" => $rtmedia->options[ "defaultSizes_featured_default_height" ], "crop" => ($rtmedia->options[ "defaultSizes_featured_default_crop" ] == "0") ? false : true ),
+			);
+		return $sizes;
+	}
 }

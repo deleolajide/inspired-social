@@ -1,17 +1,10 @@
 <?php
 /*
-Title: Conditional Fields
+Title: Conditional Fields <span class="piklist-title-right">Order 90</span>
 Post Type: piklist_demo
 Order: 90
-Collapse: true
+Collapse: false
 */
-?>
-
-<h3 class="demo-highlight">
-  <?php _e('Hide or show one field or many. You can also update a field when a value is set in another.','piklist');?>
-</h3>
-
-<?php
 
   piklist('field', array(
     'type' => 'select'
@@ -40,8 +33,8 @@ Collapse: true
       )
     )
     ,'on_post_status' => array(
-      'value' => 'lock'
-    )
+        'value' => 'lock'
+      )
   ));
 
   piklist('field', array(
@@ -56,8 +49,8 @@ Collapse: true
       )
     )
     ,'on_post_status' => array(
-      'value' => 'lock'
-    )
+        'value' => 'lock'
+      )
   ));
 
   piklist('field', array(
@@ -72,8 +65,8 @@ Collapse: true
       )
     )
     ,'on_post_status' => array(
-      'value' => 'lock'
-    )
+        'value' => 'lock'
+      )
   ));
 
   piklist('field', array(
@@ -192,7 +185,7 @@ Collapse: true
         'value' => 'lock'
       )
   ));
-  
+
   piklist('field', array(
     'type' => 'radio'
     ,'field' => 'change'
@@ -205,14 +198,14 @@ Collapse: true
     ,'conditions' => array(
       array(
         'field' => 'update_field'
-        ,'value' => 'hello-world' 
-        ,'update' => 'Hello World!' 
+        ,'value' => 'hello-world'
+        ,'update' => 'Hello World!'
         ,'type' => 'update'
       )
       ,array(
         'field' => 'update_field'
-        ,'value' => 'clear' 
-        ,'update' => '' 
+        ,'value' => 'clear'
+        ,'update' => ''
         ,'type' => 'update'
       )
     )
@@ -224,17 +217,17 @@ Collapse: true
   piklist('field', array(
     'type' => 'text'
     ,'field' => 'update_field'
-    ,'value' => 'Hello World!' 
+    ,'value' => 'Hello World!'
     ,'label' => 'Update This Field'
     ,'description' => 'This field is updated by the field above'
     ,'on_post_status' => array(
         'value' => 'lock'
       )
   ));
-  
+
   piklist('shared/code-locater', array(
     'location' => __FILE__
     ,'type' => 'Meta Box'
   ));
-  
+
 ?>

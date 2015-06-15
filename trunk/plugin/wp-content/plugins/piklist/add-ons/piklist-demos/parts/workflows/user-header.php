@@ -1,8 +1,8 @@
 <?php
 /*
-Title: User Workflow Demo
+Title: User Workflow Test
 Order: 0
-Flow: User Demo
+Flow: User Test
 Page: user-edit.php, profile.php
 Header: true
 Position: body

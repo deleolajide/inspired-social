@@ -1,17 +1,15 @@
 ===BP Group Documents  ===
-Contributors: lenasterg
+Contributors: lenasterg, NTS on cti.gr
 Tags: wpms, buddypress, group, document, plugin, file, media, storage, upload, widget
 Requires at least: WP 3.5, BuddyPress 1.7
-Tested up to: 3.7.1, BuddyPress 1.9
-Stable tag: 1.7 (Requires at least: WP 3.5, BuddyPress 1.7)
+Tested up to: 4.2.2 BuddyPress 2.2
+Stable tag: 1.9.4 (Requires at least: WP 3.5, BuddyPress 1.7)
 License: GNU General Public License 3.0 or newer (GPL) http://www.gnu.org/licenses/gpl.html
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q4VCLDW4BFW6L
+
 
 BP Group Documents creates a page within each BuddyPress group to upload and any type of file or document.
 
 == Description ==
-Original plugin is <a href="http://wordpress.org/extend/plugins/buddypress-group-documents/">no longer supported</a> so revised.
-
 BP Group Documents creates a page within each BuddyPress group to upload and any type of file or document. This allows members of BuddyPress groups to upload and store files and documents that are relevant to the group.
 
 Documents can be edited and deleted either by the document owner or by the group administrator.
@@ -21,8 +19,13 @@ The site administrator can set filters on file extensions, set display options.
 Group members and moderators can receive email notifications at their option.
 The group administrator can decide if all members or only admins/moderators can upload documents (Since v0.5)
 User verification for Downloads: when a document is downloaded, a redirect page checks is the user is member of the group (in case of a private  or hidden groups) and only then the user can download the file.(Since v0.5)
-3 Widgets: "User's groups documents" (since v0.5) ,"Recent Uploads" , "Popular Downloads"  can be used to show activity at a glance.
-Contributions by Lena Stergatu for WP 3.3, with additional bug fixes and improvements by Keeble Smith (http://keeblesmith.com) and Anton Andreasson work for BP 1.7. Original plugin author Peter Anselmo.
+For private networks, see the FAQ "I have a members only network. How to disable file download for non members?" .
+
+4 Widgets: "User's groups documents", "Recent Uploads" , "Popular Downloads", can be used to show activity at a glance. If the theme support different sidebars for group pages, the  BP_Group_Documents_CurrentGroup_Widget can be used to show current group's documents.
+
+Contributions by Lena Stergatu for WP 3.3, with additional bug fixes and improvements by Keeble Smith (http://keeblesmith.com) and Anton Andreasson work for BP 1.7.
+
+Original plugin is <a href="http://wordpress.org/extend/plugins/buddypress-group-documents/">no longer supported</a> so revised. Original plugin author Peter Anselmo.
 
 PLEASE: If you have any issues or it doesn't work for you, please report in support forum.  It doesn't help anyone to mark "broken" without asking around.  Thanks!
 
@@ -50,6 +53,27 @@ RewriteRule ^wp\-content/blogs\.dir/1/files/group\-documents/(.*) /?get_group_do
 If you run a windows server and you get errors about mb_convert_case  function which is a default php function (see http://php.net/manual/en/function.mb-convert-case.php), you must uncomment the line with php_mbstring.dll in your php.ini.
 = Can I link to the add file form =
  If you are a plugin developer and want to use the upload file form you can link to /group_slug/bpgroupdocuments_slug/add to access the upload document form
+= I have a members only network. How to disable file download for non members? =
+Add the following function into your /wp-content/wp-plugins/bp-custom.php file
+`
+/*
+ * Download file only in the user is logged in
+ */
+
+function bp_only_logged_in_can_download( $error ) {
+// If we have a only logged-in users site
+    if ( ! is_user_logged_in() ) {
+	$error = array(
+	    'message' => __( 'You must log in to access the page you requested.', 'buddypress' ),
+	    'redirect' => bp_root_domain()
+	);
+    }
+    return $error;
+    //end added on 16/1/2015
+}
+
+add_filter( 'bp_group_documents_download_access', 'bp_only_logged_in_can_download' );
+`
 
 == Screenshots ==
 1. Admin settings page
@@ -64,6 +88,36 @@ If you run a windows server and you get errors about mb_convert_case  function w
 
 
 == Changelog ==
+= Version 1.9.4 (5/6/2015)=
+* Fix for widgets, pros @thebrandonallen
+* Add icon for ppsx
+* Fix for Strict Standards setup
+
+= Version 1.9.3.1 (21/4/2015)=
+* Minor fix
+
+= Version 1.9.3 (6/4/2015)=
+* Fix BP_Group_Documents_CurrentGroup_Widget for hidden groups
+* Updated Italian language file, thanks to Daniele Mezzetti
+
+= Version 1.9.2 (9/3/2015) =
+* Fix download count for non-login users
+* Fix warning caused by setcookie
+* Fix a typo
+* Add ods as default valid file extension
+
+= Version 1.9.1 (16/1/2015) =
+* Add link for "Add new document" on BP_Group_Documents_CurrentGroup_Widget
+* Add new filter bp_group_documents_download_access. Thanks to @kallekillen for the idea.
+
+= Version 1.9 (8/12/2014) =
+* Category link added in documents list.
+* Escaping fix. Strip slashes on the way out, so that file titles and descriptions don't have so many unnecessary backslashes. Thanks to @jreeve for patch.
+
+
+= Version 1.8 (September 1, 2014) =
+* Fix Sort - "Order by" & Filter - "Category" which was not working with Pagination. Thanks to @wp4yd for reporting.
+
 = Version 1.7 (April 22, 2014) =
 * Add new widget: BP_Group_Documents_CurrentGroup_Widget. If the theme support different sidebars for group pages, it can be used to show current group's documents.
 * Fix some minor issues in widgets

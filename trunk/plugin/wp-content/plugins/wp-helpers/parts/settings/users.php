@@ -4,6 +4,7 @@ Title: User Profiles
 Setting: piklist_wp_helpers
 Tab: Users
 Order: 600
+Tab Order: 60
 */
 
 
@@ -26,6 +27,3 @@ Order: 600
       ,'jabber' => 'Jabber/Google Talk'
     )
   ));
-
-  
-?>

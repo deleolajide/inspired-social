@@ -16,6 +16,8 @@ Order: 80
         'type' => 'text'
         ,'field' => 'address_1'
         ,'label' => 'Street Address'
+        ,'value' => 'my value'
+        ,'required' => true
         ,'columns' => 12
         ,'attributes' => array(
           'placeholder' => 'Street Address'
@@ -107,6 +109,14 @@ Order: 80
           'placeholder' => 'Postal Code'
         )
       )
+      ,array(
+        'type' => 'text'
+        ,'field' => 'phone'
+        ,'label' => 'Phone'
+        ,'template' => 'post_meta'
+        ,'columns' => 12
+      )
+
     )
     ,'on_post_status' => array(
         'value' => 'lock'
@@ -141,6 +151,7 @@ Order: 80
       ,array(
         'type' => 'select'
         ,'field' => 'state'
+        ,'label' => 'State'
         ,'columns' => 4
         ,'choices' => array(
           'AL' => 'Alabama'
@@ -201,6 +212,13 @@ Order: 80
         ,'field' => 'postal_code'
         ,'label' => 'Postal Code'
         ,'columns' => 3
+      )
+      ,array(
+        'type' => 'text'
+        ,'field' => 'phone'
+        ,'label' => 'Phone'
+        ,'template' => 'post_meta'
+        ,'columns' => 12
       )
     )
     ,'on_post_status' => array(
@@ -307,13 +325,20 @@ Order: 80
         ,'label' => 'Postal Code'
         ,'columns' => 3
       )
+      ,array(
+        'type' => 'text'
+        ,'field' => 'ungrouped_phone'
+        ,'label' => 'Phone'
+        ,'template' => 'post_meta'
+        ,'columns' => 12
+      )
     )
     ,'on_post_status' => array(
         'value' => 'lock'
       )
   ));
 
- piklist('field', array(
+   piklist('field', array(
     'type' => 'group'
     ,'label' => 'Address (Un-Grouped/Add-More)'
     ,'add_more' => true
@@ -401,6 +426,13 @@ Order: 80
         ,'field' => 'ungrouped_postal_code_addmore'
         ,'label' => 'Postal Code'
         ,'columns' => 3
+      )
+      ,array(
+        'type' => 'text'
+        ,'field' => 'ungrouped_phone_addmore'
+        ,'label' => 'Phone'
+        ,'template' => 'post_meta'
+        ,'columns' => 12
       )
     )
     ,'on_post_status' => array(

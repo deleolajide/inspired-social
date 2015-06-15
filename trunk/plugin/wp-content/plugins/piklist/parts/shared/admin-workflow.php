@@ -1,6 +1,6 @@
 <?php if ($position == 'header'): ?> 
   
-  <div class="wrap">
+  <div class="piklist-workflow">
 
 <?php endif; ?>
 
@@ -46,7 +46,7 @@
               $data['config']['redirect'] = apply_filters('piklist_workflow_redirect_url', $data['config']['redirect'], $workflow, $data);
               $url = admin_url($data['config']['redirect'] . (strstr($data['config']['redirect'], '?') ? '&' : '?') . http_build_query(array_filter($url)));
             }
-            else if (!isset($data['config']['disable']))
+            elseif (!isset($data['config']['disable']))
             {
               if ($url_arguments['post'])
               {
@@ -77,11 +77,15 @@
     </h2>
 
     <?php
-      if ($active_data)
+      if (isset($active_data) && $active_data)
       {
+        do_action('piklist_pre_render_workflow', $active_data);
+        
         piklist::render($active_data['part'], array(
           'data' => $active_data
         ));
+        
+        do_action('piklist_post_render_workflow', $active_data);
       }
     ?>
 

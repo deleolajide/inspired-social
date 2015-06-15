@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bp-group-documents\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/buddypress-group-documents\n"
-"POT-Creation-Date: 2014-03-17 10:01+0200\n"
-"PO-Revision-Date: 2014-03-17 10:02+0200\n"
+"POT-Creation-Date: 2014-12-08 12:04+0200\n"
+"PO-Revision-Date: 2014-12-08 12:05+0200\n"
 "Last-Translator: Lena Stergatu <stergatu@cti.gr>\n"
 "Language-Team: \n"
 "Language: en_GB\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.7\n"
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/buddypress-group-documents.php:33
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/buddypress-group-documents.php:45
@@ -24,11 +24,11 @@ msgstr ""
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/admin.php:23
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/admin.php:296
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:31
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:49
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:180
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:317
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:419
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/loader.php:124
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:57
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:186
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:319
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:420
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/loader.php:126
 msgid "Documents"
 msgstr ""
 
@@ -37,7 +37,7 @@ msgid "There was an error saving, please try again"
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/buddypress-group-documents.php:93
-msgid "Settings saved successfully"
+msgid "Settings Saved."
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/buddypress-group-documents.php:120
@@ -64,12 +64,12 @@ msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/buddypress-group-documents.php:146
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/buddypress-group-documents.php:155
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:168
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:163
 msgid "Delete"
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/buddypress-group-documents.php:154
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:164
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:159
 msgid "Edit"
 msgstr ""
 
@@ -166,7 +166,7 @@ msgid "Use this name instead of \"documents\" "
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/admin.php:105
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:226
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:221
 msgid "Valid File Formats"
 msgstr ""
 
@@ -225,7 +225,7 @@ msgid "List"
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:66
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:266
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:260
 msgid "Category:"
 msgstr ""
 
@@ -234,7 +234,7 @@ msgid "All"
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:76
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:97
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:94
 msgid "Go"
 msgstr ""
 
@@ -242,80 +242,80 @@ msgstr ""
 msgid "Order by:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:87
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:86
 msgid "Newest"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:91
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:89
 msgid "Alphabetical"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:95
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:92
 msgid "Most Popular"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:149
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:465
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:144
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:472
 #, php-format
 msgid "Uploaded by %s on %s"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:154
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:149
 msgid " downloads since then."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:194
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:189
 msgid "There are no documents in the selected category."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:196
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:191
 msgid "There are no documents uploaded for this group."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:221
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:216
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/group-forum-attachments.php:16
 msgid "Choose File:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:231
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:226
 msgid "Document:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:237
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:232
 msgid "Featured Document"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:242
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:237
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/group-forum-attachments.php:21
 msgid "Display Name:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:245
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:240
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/group-forum-attachments.php:25
 msgid "Description:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:286
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:280
 msgid "Save"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:291
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:285
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/templatetags.php:167
 msgid "Upload a New Document"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:315
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:309
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/templatetags.php:83
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/templatetags.php:197
 msgid "There was a security problem"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:319
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:313
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/templatetags.php:218
 msgid "The item to delete could not be found"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:428
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/bp_group_documents_functions.php:422
 msgid "Group Document Categories"
 msgstr ""
 
@@ -328,9 +328,7 @@ msgid "The type of document submitted is not allowed"
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/classes.php:194
-msgid ""
-"There was a problem; your file is larger than is allowed by the site "
-"administrator."
+msgid "There was a problem; your file is larger than is allowed by the site administrator."
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/classes.php:197
@@ -353,7 +351,7 @@ msgstr ""
 msgid "There was a problem saving your file, please try again."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/classes.php:488
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/classes.php:492
 msgid "In category:"
 msgstr ""
 
@@ -376,8 +374,8 @@ msgstr ""
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/filters.php:91
 #, php-format
 msgid ""
-"You must be a logged-in member of the group %s to access this document. If "
-"you are a member of the group, please log into the site and try again."
+"You must be a logged-in member of the group %s to access this document. If you are a member of the group, "
+"please log into the site and try again."
 msgstr ""
 
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/filters.php:124
@@ -393,21 +391,20 @@ msgstr ""
 msgid "Document successfully uploaded"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:23
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:25
 msgid "A member uploads a document to a group you belong to"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:29
-msgid ""
-"A member uploads a document to a group for which you are an moderator/admin"
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:31
+msgid "A member uploads a document to a group for which you are an moderator/admin"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:58
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:61
 #, php-format
 msgid "A document was uploaded to %s"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:111
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:119
 #, php-format
 msgid ""
 "%s uploaded a new file: %s to the group: %s.\n"
@@ -421,7 +418,7 @@ msgid ""
 "------------------------\n"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:124
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/notifications.php:132
 #, php-format
 msgid "To disable these notifications please log in and go to: %s"
 msgstr ""
@@ -451,71 +448,71 @@ msgstr ""
 msgid "Viewing item %s to %s (of %s items)"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:51
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:64
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:59
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:73
 #, php-format
 msgid "Recent Group %s"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:52
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:60
 #, php-format
 msgid "The most recently uploaded group %s. Only from public groups"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:93
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:102
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:229
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:362
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:364
 #, php-format
 msgid "posted in %s"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:99
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:108
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:240
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:368
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:472
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:370
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:479
 #, php-format
 msgid "There are no %s to display."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:138
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:147
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:269
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:393
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:500
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:395
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:507
 msgid "Title:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:140
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:149
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:271
 msgid "Filter by Group:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:142
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:151
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:273
 msgid "Select Group..."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:162
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:293
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:399
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:506
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:167
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:289
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:397
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:510
 #, php-format
 msgid "Show featured %s only"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:164
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:170
 #: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:296
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:402
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:509
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:403
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:515
 msgid "Number of items to show:"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:182
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:196
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:188
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:202
 #, php-format
 msgid "Popular Group %s"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:183
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:189
 #, php-format
 msgid "The most commonly downloaded group %s. Only for public groups"
 msgstr ""
@@ -524,40 +521,40 @@ msgstr ""
 msgid "downloads"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:301
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:302
 msgid "Show downloads"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:319
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:321
 #, php-format
 msgid "%s in your groups"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:320
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:322
 #, php-format
 msgid "%s for a logged in user's groups."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:341
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:343
 #, php-format
 msgid "Recent %s from your Groups"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:421
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:422
 #, php-format
 msgid "%s in this group"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:422
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:423
 #, php-format
 msgid "%s for the current group."
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:440
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:447
 #, php-format
 msgid "Recent %s for the group"
 msgstr ""
 
-#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:474
+#: C:\xampp\htdocs\blogsRun\wp-content\plugins\bp-group-documents/include/widgets.php:481
 msgid "View all"
 msgstr ""

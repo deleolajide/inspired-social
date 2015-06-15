@@ -423,7 +423,7 @@ class RTMediaQuery {
 		$this->original_query = $query;
 		$this->query          = wp_parse_args( $query, $this->query );
 		//Set Json
-		$allowed_query = apply_filters( 'rtmedia_allowed_query', array( "id", "media_id", "media_type", "media_author", "album_id", "context", "context_id", "global", "privacy", "per_page" ) );
+		$allowed_query = apply_filters( 'rtmedia_allowed_query', array( "id", "media_id", "media_type", "media_author", "album_id", "context", "context_id", "global", "privacy", "per_page", "lightbox", "media_title" ) );
 		if ( isset ( $_REQUEST[ "rtmedia_shortcode" ] ) ){
 			$query_data = $_REQUEST;
 			foreach ( $query_data as $key => $val ) {
@@ -439,6 +439,14 @@ class RTMediaQuery {
 						unset ( $this->query[ $key ] );
 					}
 				}
+			}
+
+			/*
+			 * in gallery shortcode with uploader set to true, $this->is_gallery_shortcode won't be set for very first time and hence
+			 * will miss the check for "$this->query['uploader']"
+			*/
+			if( isset( $this->query['uploader'] ) ){
+				unset( $this->query['uploader'] );
 			}
 		}
 
@@ -572,6 +580,26 @@ class RTMediaQuery {
 			//Do not include per_page in sql query to get media
 			$this->action_query->per_page_media = intval( $this->media_query[ 'per_page' ] );
 			unset( $this->media_query[ 'per_page' ] );
+		}
+                
+		// lightbox option
+		if ( isset( $this->media_query[ 'lightbox' ] ) ){
+			if( $this->media_query[ 'lightbox' ] == 'false' ) {
+				// Add filter to add no-popup class in a tag
+				add_filter( 'rtmedia_gallery_list_item_a_class', 'rtmedia_add_no_popup_class', 10, 1 );
+			}
+			// Unset the lightbox parameter from media query
+			unset( $this->media_query[ 'lightbox' ] );
+		}
+
+		// media title option
+		if ( isset( $this->media_query[ 'media_title' ] ) ){
+			if( $this->media_query[ 'media_title' ] == 'false' ) {
+				// Add filter show media title
+				add_filter( 'rtmedia_media_gallery_show_media_title', 'rtmedia_gallery_do_not_show_media_title', 10, 1 );
+			}
+			// Unset the media title parameter from media query
+			unset( $this->media_query[ 'media_title' ] );
 		}
 
 		$this->media_query = apply_filters( 'rtmedia_media_query', $this->media_query, $this->action_query, $this->query );
@@ -711,12 +739,10 @@ class RTMediaQuery {
 		$this->current_media = - 1;
 		if ( $this->action_query->action == 'comments' && ! isset ( $this->action_query->id ) ){
 			$this->media = $this->populate_comments();
+		} else if ( $this->is_album() && ! $this->shortcode_global ){
+			$this->media = $this->populate_album();
 		} else {
 			$this->media = $this->populate_media();
-		}
-
-		if ( $this->is_album() && ! $this->shortcode_global ){
-			$this->media = $this->populate_album();
 		}
 
 		if ( empty ( $this->media ) ){

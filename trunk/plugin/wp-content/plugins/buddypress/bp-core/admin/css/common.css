@@ -4,6 +4,57 @@
  * @since BuddyPress (1.6)
  */
 
+/* Welcome Screen
+------------------------------------------------------------------------------*/
+
+body.dashboard_page_bp-about span.dashicons,
+body.index_page_bp-about span.dashicons {
+	float: left;
+	clear: left;
+	margin: 15px 15px 0 0 ;
+	height: 90px;
+	width: 90px;
+	background-color: #cccccc;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	border: 1px solid #c1c1c1;
+	font-size: 65px;
+	line-height: 90px;
+	color: #999;
+	text-align: center;
+}
+
+/* User's Lists
+------------------------------------------------------------------------------*/
+
+body.site-users-php th#role,
+body.users-php th#role,
+body.users_page_bp-signups th#count_sent {
+	width: 10%;
+}
+
+body.site-users-php th#name,
+body.site-users-php th#email,
+body.users-php th#name,
+body.users-php th#registered,
+body.users-php th#email,
+body.users_page_bp-signups th#name,
+body.users_page_bp-signups th#registered,
+body.users_page_bp-signups th#email,
+body.users_page_bp-signups th#date_sent {
+	width: 15%;
+}
+
+body.users-php th#blogs,
+body.users_page_bp-signups th#blogs {
+	width: 20%;
+}
+
+body.users_page_bp-signups th.column-count_sent,
+body.users_page_bp-signups td.count_sent {
+	text-align: center;
+}
+
 /* Icon 32's
 ------------------------------------------------------------------------------*/
 
@@ -94,28 +145,6 @@ body.branch-3-7 ul#adminmenu li.toplevel_page_bp-groups_network.wp-has-current-s
 /* Tools */
 #adminmenu .toplevel_page_network-tools div.wp-menu-image:before {
     content: "";
-}
-
-th.column-gid {
-	width: 60px;
-}
-td.column-gid {
-	vertical-align: middle;
-}
-table.bp-group-members th,
-table.bp-group-members td {
-	padding: 5px 0;
-}
-table.bp-group-members .uid-column {
-	padding-left: 20px;
-	padding-right: 20px;
-}
-table.bp-group-members .uname-column {
-	width: 70%;
-}
-table.bp-group-members .urole-column {
-	padding-left: 20px;
-	padding-right: 20px;
 }
 
 /* Components
@@ -374,7 +403,7 @@ body.branch-3-7.settings_page_bp-components tr.members.active td.plugin-title sp
 
 .bp-badge {
 	font: normal 150px/1 'dashicons' !important;
-	color: #000;
+	color: #D84800;
 	display: inline-block;
 }
 
@@ -387,10 +416,6 @@ body.branch-3-7.settings_page_bp-components tr.members.active td.plugin-title sp
 	top: 0;
 	right: 0;
 }
-	body.rtl .about-wrap .bp-badge {
-		right: auto;
-		left: 0;
-	}
 
 /* HiDPI
 ------------------------------------------------------------------------------*/
@@ -423,11 +448,5 @@ body.branch-3-7.settings_page_bp-components tr.members.active td.plugin-title sp
 	body.branch-3-7 ul#adminmenu li.toplevel_page_bp-groups_network .wp-menu-image {
 		background-image: url('../images/menu-2x.png') !important;
 		background-size: 209px 64px;
-	}
-
-	/* Badge */
-	.bp-badge {
-		background-image: url('../images/badge-2x.png');
-		background-size: 173px 194px;
 	}
 }

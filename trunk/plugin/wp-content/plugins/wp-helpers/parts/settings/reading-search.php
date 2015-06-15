@@ -7,17 +7,17 @@ Order: 320
 */
 
 $valid_post_types = piklist(
-                     get_post_types(
-                       array(
-                        'exclude_from_search' => false
-                       )
-                       ,'objects'
-                     )
-                     ,array(
-                       'name'
-                       ,'label'
-                     )
-                    );
+   get_post_types(
+     array(
+      'exclude_from_search' => false
+     )
+     ,'objects'
+   )
+   ,array(
+     'name'
+     ,'label'
+   )
+  );
 
 
 piklist('field', array(
@@ -32,6 +32,3 @@ piklist('field', array(
    )
    ,'choices' => $valid_post_types
 ));
-
-
-?>

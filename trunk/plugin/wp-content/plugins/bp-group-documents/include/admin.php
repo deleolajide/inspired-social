@@ -11,8 +11,8 @@ if (!defined('ABSPATH'))
  * @version 2, 13/5/2013, stergatu
  */
 function bp_group_documents_admin() {
-    global $bp, $bbpress_live;
-
+    global $bbpress_live;
+    $bp = buddypress();
     do_action('bp_group_documents_admin');
 
     /* If the form has been submitted and the admin referrer checks out, save the settings */
@@ -93,7 +93,7 @@ function bp_group_documents_admin() {
                 echo "<div id='message' class='updated fade'><p>" . __('Settings Updated.', 'bp-group-documents') . "</p></div>";
             ?>
 
-                <form action="" name="group-documents-settings-form" id="group-documents-settings-form" method="post">				
+                <form action="" name="group-documents-settings-form" id="group-documents-settings-form" method="post">
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><label for="target_uri"><?php _e('Use this name instead of "documents" ', 'bp-group-documents') ?>:</label></th>
@@ -176,17 +176,17 @@ function bp_group_documents_admin() {
         }
 
         /**
-         * Finds the url of settings page 
+         * Finds the url of settings page
          * @global type $wpdb
-         * @global type $bp
-         * @return string
-         * @since v 0.6 
+               * @return string
+         * @since v 0.6
          * @author lenasterg
          * @version 1, 4/6/2013
          */
         function bp_group_documents_find_admin_location() {
-            global $wpdb, $bp;
-            if (!is_super_admin())
+            global $wpdb;
+    $bp = buddypress();
+    if (!is_super_admin())
                 return false;
             // test for BP1.6+ (truncated to allow testing on beta versions)
             if (version_compare(substr(BP_VERSION, 0, 3), '1.6', '>=')) {
@@ -201,17 +201,17 @@ function bp_group_documents_admin() {
         }
 
         /**
-         * 
+         *
          * @global type $wpdb
-         * @global type $bp
          * @return boolean
          * @version 3, 4/6/2013, stergatu, fix the admin menu link for single wp installation
          * @since 0.5
          * @todo write the bp_group_documents_add_admin_style (minor)
          */
         function bp_group_documents_group_add_admin_menu() {
-            global $wpdb, $bp;
-            /* Add the administration tab under the "Site Admin" tab for site administrators */
+            global $wpdb;
+    $bp = buddypress();
+    /* Add the administration tab under the "Site Admin" tab for site administrators */
             $page = add_submenu_page(
                     bp_group_documents_find_admin_location(), 'Buddypress Group Documents ' . __('Settings'), '<span class="bp-group-documents-admin-menu-header">' . __('Buddypress Group Documents', 'bp-group-documents') . '</span>', 'manage_options', 'bp-group-documents-settings', 'bp_group_documents_admin');
 
@@ -228,16 +228,17 @@ function bp_group_documents_admin() {
          * @param type $file
          * @return array
          * @since version 0.6
-         * @version 2, 3/9/2013, fix the BP_GROUP_DOCUMENTS_DIR
+         * @version 3, 21/4/2015 esc_url
+	 * v2, 3/9/2013, fix the BP_GROUP_DOCUMENTS_DIR
          * version 1, 4/6/2013 stergtu
-         * 
+         *
          */
         function bp_group_documents_settings_link($links, $file) {
             $this_plugin = BP_GROUP_DOCUMENTS_DIR . '/loader.php';
             if ($file == $this_plugin) {
                 return array_merge($links, array(
-                    'settings' => '<a href="' . add_query_arg(array('page' => 'bp-group-documents-settings'), bp_group_documents_find_admin_location()) . '">' . esc_html__('Settings', 'bp-group-documents') . '</a>',
-                ));
+                    'settings' => '<a href="' . esc_url( add_query_arg( array( 'page' => 'bp-group-documents-settings' ), bp_group_documents_find_admin_location() ) ) . '">' . esc_html__( 'Settings', 'bp-group-documents' ) . '</a>',
+	));
             }
 
             return $links;
@@ -291,7 +292,7 @@ function bp_group_documents_check_legacy_paths() {
  * @since 1.5
  */
 function bp_group_documents_register_activity_actions() {
-    global $bp;
+    $bp = buddypress();
     $nav_page_name = get_option('bp_group_documents_nav_page_name');
     $name = !empty($nav_page_name) ? $nav_page_name : __('Documents', 'bp-group-documents');
     bp_activity_set_action(

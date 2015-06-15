@@ -33,6 +33,7 @@ class RTMediaUploadEndpoint {
 			$redirect_url = "";
 			if ( wp_verify_nonce( $nonce, 'rtmedia_upload_nonce' ) ){
 				$model        = new RTMediaUploadModel();
+                do_action( 'rtmedia_upload_set_post_object' );
 				$this->upload = $model->set_post_object();
 				if ( isset ( $_POST[ 'activity_id' ] ) && $_POST[ 'activity_id' ] != - 1 ){
 					$this->upload[ 'activity_id' ] = $_POST[ 'activity_id' ];
@@ -116,7 +117,7 @@ class RTMediaUploadEndpoint {
 								$redirect_url = get_rtmedia_permalink( $media[ 0 ]->id );
 							}
 							$redirect_url = apply_filters( "rtmedia_simple_file_upload_redirect_url_filter", $redirect_url );
-							wp_safe_redirect( $redirect_url );
+							wp_safe_redirect( esc_url_raw( $redirect_url ) );
 							die();
 						}
 
@@ -168,7 +169,7 @@ class RTMediaUploadEndpoint {
 				} else {
 					header( 'Content-type: application/json' );
 				}
-				echo json_encode( $data );
+				echo json_encode( apply_filters( 'rtmedia_upload_endpoint_response', $data ) );
 			}
 
 

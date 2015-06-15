@@ -35,9 +35,9 @@ class BP_Group_Documents_Template {
     public $header;
 
     public function __construct() {
-        global $bp;
+        $bp = buddypress();
 
-        //the parent category id is used sometimes used in post_logic, but always in category_logic so we get it first
+	//the parent category id is used sometimes used in post_logic, but always in category_logic so we get it first
         $this->parent_id = self::get_parent_category_id();
 
         $this->do_post_logic();
@@ -54,13 +54,12 @@ class BP_Group_Documents_Template {
     }
 
     /**
-     * 
-     * @global type $bp
+     *
      * @return type
      */
     public static function get_parent_category_id() {
-        global $bp;
-        $parent_info = term_exists("g" . $bp->groups->current_group->id, 'group-documents-category');
+        $bp = buddypress();
+	$parent_info = term_exists("g" . $bp->groups->current_group->id, 'group-documents-category');
 
         if (!$parent_info) {
             $parent_info = wp_insert_term("g" . $bp->groups->current_group->id, 'group-documents-category');
@@ -76,8 +75,8 @@ class BP_Group_Documents_Template {
      * @version 1.2.2, 3/10/2013 stergatu, sanitize_text_field, add wp_verify
      */
     private function do_post_logic() {
-        global $bp;
-        if (isset($_POST['bp_group_documents_operation'])) {
+        $bp = buddypress();
+	if (isset($_POST['bp_group_documents_operation'])) {
             $nonce = $_POST['bp_group_document_save'];
             if ((!isset($nonce)) || (!wp_verify_nonce($nonce, 'bp_group_document_save_' . $_POST['bp_group_documents_operation']))) {
                 bp_core_add_message(__('There was a security problem', 'bp-group-documents'), 'error');
@@ -126,14 +125,13 @@ class BP_Group_Documents_Template {
     }
 
     /**
-     * 
-     * @global type $bp
+     *
      * @param type $document
      */
     private function update_categories($document) {
-        global $bp;
+        $bp = buddypress();
 
-        //update categories from checkbox list
+	//update categories from checkbox list
         if (array_key_exists('bp_group_documents_categories', $_POST)) {
             $category_ids = apply_filters('bp_group_documents_category_ids_in', $_POST['bp_group_documents_categories']);
             wp_set_object_terms($document->id, $category_ids, 'group-documents-category');
@@ -148,16 +146,15 @@ class BP_Group_Documents_Template {
     }
 
     /**
-     * 
-     * @global type $bp
+     *
      * @version 1.2.2 add security, fix misplayed error messages
      * v1.2.1, 1/8/2013, stergatu, implement  direct call to  add document functionality
      * @since version 0.8
-     * 
+     *
      */
     private function do_url_logic() {
-        global $bp;
-        do_action('bp_group_documents_template_do_url_logic');
+        $bp = buddypress();
+	do_action('bp_group_documents_template_do_url_logic');
 
         //figure out what to display in the bottom "detail" area based on url
         //assume we are adding a new document
@@ -168,7 +165,7 @@ class BP_Group_Documents_Template {
             $this->show_detail = 1;
         }
         //if we're editing, grab existing data
-//          
+//
         if (($bp->current_action == BP_GROUP_DOCUMENTS_SLUG)) {
             if (count($bp->action_variables) > 0) {
                 //stergatu add on 1/8/2013
@@ -237,9 +234,9 @@ class BP_Group_Documents_Template {
     }
 
     private function do_category_logic() {
-        global $bp;
+        $bp = buddypress();
 
-        do_action('bp_group_documents_template_do_category_logic');
+	do_action('bp_group_documents_template_do_category_logic');
 
         //1st priority, category in url
         if (isset($_GET['category'])) {
@@ -258,15 +255,12 @@ class BP_Group_Documents_Template {
     }
 
     /**
-     * 
-     * @global type $bp
+     *
      * @param type $not_empty
      * @return type
      */
     public static function get_group_categories($not_empty = true) {
-        global $bp;
-
-        $parent_id = self::get_parent_category_id();
+	$parent_id = self::get_parent_category_id();
         if ($not_empty) {
             return get_terms('group-documents-category', array('parent' => $parent_id));
         } else {
@@ -275,8 +269,6 @@ class BP_Group_Documents_Template {
     }
 
     private function do_sorting_logic() {
-        global $bp;
-
         do_action('bp_group_documents_template_do_sorting_logic');
 
         //1st priority, order is in url.  Store in cookie as well
@@ -313,13 +305,13 @@ class BP_Group_Documents_Template {
     }
 
     /**
-     * @author  
-     * @since  
+     * @author
+     * @since
      */
     private function do_paging_logic() {
-        global $bp;
+        $bp = buddypress();
 
-        do_action('bp_group_documents_template_do_paging_logic');
+	do_action('bp_group_documents_template_do_paging_logic');
 
         $this->items_per_page = get_option('bp_group_documents_items_per_page');
 

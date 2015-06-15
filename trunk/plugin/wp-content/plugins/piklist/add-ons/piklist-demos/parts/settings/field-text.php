@@ -2,50 +2,52 @@
 /*
 Title: Text Fields
 Setting: piklist_demo_fields
-Order: 10
+Tab Order: 1
+Order: 30
 */
 
-  
   piklist('field', array(
     'type' => 'text'
-    ,'field' => 'text_regular'
-    ,'label' => __('Text ~ regular-text')
-    ,'description' => __('ipsum dolor sit amet, consectetur adipiscing elit.')
+    ,'field' => 'text_class_regular'
+    ,'label' => 'Text'
+    ,'description' => 'class="regular-text"'
     ,'help' => 'You can easily add tooltips to your fields with the help parameter.'
-    ,'value' => 'Lorem'
     ,'attributes' => array(
       'class' => 'regular-text'
+      ,'placeholder' => 'Enter some text'
     )
+  ));
+
+  piklist('field', array(
+    'type' => 'text'
+    ,'field' => 'text_required'
+    ,'label' => 'Text Required'
+    ,'description' => "required => true"
+    ,'attributes' => array(
+      'class' => 'regular-text'
+      ,'placeholder' => 'Enter text or this page won\'t save.'
+    )
+    ,'required' => true
   ));
   
   piklist('field', array(
     'type' => 'text'
-    ,'field' => 'text_large'
-    ,'label' => __('Text ~ large-text')
-    ,'description' => __('ipsum dolor sit amet, consectetur adipiscing elit.')
-    ,'value' => 'Lorem'
+    ,'field' => 'text_add_more'
+    ,'add_more' => true
+    ,'label' => 'Add More'
+    ,'description' => 'add_more="true" columns="8"'
     ,'attributes' => array(
-      'class' => 'large-text'
-    )
-  ));
-  
-  piklist('field', array(
-    'type' => 'number'
-    ,'field' => 'number_small'
-    ,'label' => __('Number ~ small-text')
-    ,'description' => __('ipsum dolor sit amet, consectetur adipiscing elit.')
-    ,'value' => 3
-    ,'attributes' => array(
-      'class' => 'small-text'
+      'columns' => 8
+      ,'placeholder' => 'Enter some text'
     )
   ));
   
   piklist('field', array(
     'type' => 'textarea'
-    ,'field' => 'textarea_large'
-    ,'label' => __('Textarea ~ 10x50 ~ large-text code')
-    ,'description' => __('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
-    ,'value' => __('Lorem ipsum dolor sit amet, consectetur adipiscing elit.')
+    ,'field' => 'demo_textarea_large'
+    ,'label' => 'Large Code'
+    ,'description' => 'class="large-text code" rows="10" columns="50"'
+    ,'value' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
     ,'attributes' => array(
       'rows' => 10
       ,'cols' => 50
@@ -53,9 +55,16 @@ Order: 10
     )
   ));
 
-  piklist('shared/code-locater', array(
-    'location' => __FILE__
-    ,'type' => 'Settings Section'
+  piklist('field', array(
+    'type' => 'html'
+    ,'label' => 'HTML Field'
+    ,'description' => 'Allows you to output any HTML in the proper format.'
+    ,'value' => '<ul><li>First Item</li><li>Second Item</li></ul>'
   ));
 
+  piklist('shared/code-locater', array(
+    'location' => __FILE__
+    ,'type' => 'Meta Box'
+  ));
+  
 ?>

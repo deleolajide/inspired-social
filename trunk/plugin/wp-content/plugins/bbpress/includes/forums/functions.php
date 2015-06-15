@@ -115,8 +115,8 @@ function bbp_new_forum_handler( $action = '' ) {
 
 	// Nonce check
 	if ( ! bbp_verify_nonce_request( 'bbp-new-forum' ) ) {
-		bbp_add_error( 'bbp_new_forum_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-		return;
+		//bbp_add_error( 'bbp_new_forum_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//return;
 	}
 
 	// Define local variable(s)
@@ -392,8 +392,8 @@ function bbp_edit_forum_handler( $action = '' ) {
 
 	// Nonce check
 	if ( ! bbp_verify_nonce_request( 'bbp-edit-forum_' . $forum_id ) ) {
-		bbp_add_error( 'bbp_edit_forum_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-		return;
+		//bbp_add_error( 'bbp_edit_forum_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//return;
 
 	// Forum does not exist
 	} elseif ( empty( $forum ) ) {

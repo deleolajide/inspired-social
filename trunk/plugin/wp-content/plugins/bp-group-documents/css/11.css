@@ -11,7 +11,6 @@ li#afilter-group_documents a {
 table#group-documents-notification-settings th.icon {
 	background: url(../images/group_documents_bullet.gif) center no-repeat;
 }
-
 #bp-group-documents input,
 #bp-group-documents textarea {
 	width: 50%;
@@ -28,23 +27,18 @@ table#group-documents-notification-settings th.icon {
 #bp-group-documents input.button {	
 	width: auto;
 }
-
 #bp-group-documents ul#forum-topic-list li {
 	min-height:29px;
 }
-
 #bp-group-documents .sorting {
 	margin-top:-47px;
 }
-
 #bp-group-documents .spacer {
 	height:40px;
 }
-
 #document-detail-clear {
 	clear:none;
 }
-
 .bp-group-documents-category-list ul {
 	list-style-type:none;
 	margin:0;

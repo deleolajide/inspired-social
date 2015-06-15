@@ -4,6 +4,7 @@ Title: Reading
 Setting: piklist_wp_helpers
 Tab: Reading
 Order: 300
+Tab Order: 30
 */
 
   piklist('field', array(
@@ -45,7 +46,3 @@ Order: 300
       'true' => 'Remove the "Protected:" title prefix from the protected posts'
     )
   ));
-
-
-
-?>

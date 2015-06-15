@@ -1,21 +1,17 @@
 <?php
 /*
 Title: Basic
-Order: 10
-Flow: User Demo
-Default: true
+Order: 30
+Flow: User Test
 */
-  
+
   piklist('include_user_profile_fields', array(
-    'sections' => array(
-      'Personal Options'
-      ,'Name'
-      ,'Contact Info'
-      ,'About the user'
-      ,'About Yourself'
+    'meta_boxes' => array(
+      'Text Fields'
+      ,'Taxonomies'
+      ,'Upload Fields'
     )
   ));
-
 
   piklist('shared/code-locater', array(
     'location' => __FILE__

@@ -119,8 +119,8 @@ function bbp_new_topic_handler( $action = '' ) {
 
 	// Nonce check
 	if ( ! bbp_verify_nonce_request( 'bbp-new-topic' ) ) {
-		bbp_add_error( 'bbp_new_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-		return;
+//		bbp_add_error( 'bbp_new_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+//		return;
 	}
 
 	// Define local variable(s)
@@ -517,8 +517,8 @@ function bbp_edit_topic_handler( $action = '' ) {
 
 	// Nonce check
 	if ( ! bbp_verify_nonce_request( 'bbp-edit-topic_' . $topic_id ) ) {
-		bbp_add_error( 'bbp_edit_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-		return;
+		//bbp_add_error( 'bbp_edit_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//return;
 	}
 
 	// Remove kses filters from title and content for capable users and if the nonce is verified
@@ -1150,8 +1150,8 @@ function bbp_merge_topic_handler( $action = '' ) {
 
 	// Nonce check
 	if ( ! bbp_verify_nonce_request( 'bbp-merge-topic_' . $source_topic_id ) ) {
-		bbp_add_error( 'bbp_merge_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-		return;
+		//bbp_add_error( 'bbp_merge_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//return;
 
 	// Source topic not found
 	} elseif ( !$source_topic = bbp_get_topic( $source_topic_id ) ) {
@@ -1453,8 +1453,8 @@ function bbp_split_topic_handler( $action = '' ) {
 
 	// Nonce check failed
 	if ( ! bbp_verify_nonce_request( 'bbp-split-topic_' . $source_topic->ID ) ) {
-		bbp_add_error( 'bbp_split_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-		return;
+		//bbp_add_error( 'bbp_split_topic_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+		//return;
 	}
 
 	// Use cannot edit topic
@@ -1817,8 +1817,8 @@ function bbp_edit_topic_tag_handler( $action = '' ) {
 
 			// Nonce check
 			if ( ! bbp_verify_nonce_request( 'update-tag_' . $tag_id ) ) {
-				bbp_add_error( 'bbp_manage_topic_tag_update_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-				return;
+				//bbp_add_error( 'bbp_manage_topic_tag_update_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+				//return;
 			}
 
 			// Can user edit topic tags?
@@ -1856,8 +1856,8 @@ function bbp_edit_topic_tag_handler( $action = '' ) {
 
 			// Nonce check
 			if ( ! bbp_verify_nonce_request( 'merge-tag_' . $tag_id ) ) {
-				bbp_add_error( 'bbp_manage_topic_tag_merge_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-				return;
+				//bbp_add_error( 'bbp_manage_topic_tag_merge_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+				//return;
 			}
 
 			// Can user edit topic tags?
@@ -1913,8 +1913,8 @@ function bbp_edit_topic_tag_handler( $action = '' ) {
 
 			// Nonce check
 			if ( ! bbp_verify_nonce_request( 'delete-tag_' . $tag_id ) ) {
-				bbp_add_error( 'bbp_manage_topic_tag_delete_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
-				return;
+				//bbp_add_error( 'bbp_manage_topic_tag_delete_nonce', __( '<strong>ERROR</strong>: Are you sure you wanted to do that?', 'bbpress' ) );
+				//return;
 			}
 
 			// Can user delete topic tags?
@@ -2051,7 +2051,6 @@ function bbp_get_super_stickies() {
  *                    and action
  * @uses bbp_get_forum_permalink() To get the forum link
  * @uses bbp_get_topic_permalink() To get the topic link
- * @uses add_query_arg() To add args to the url
  * @uses wp_safe_redirect() To redirect to the topic
  * @uses bbPress::errors:add() To log the error messages
  */
