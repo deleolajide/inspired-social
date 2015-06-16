@@ -32,7 +32,7 @@ var MINI_PASSWORDS	= [];
 var MINI_RESOURCE	= JAPPIX_RESOURCE + ' Mini';
 var MINI_VISITOR	= null;
 var MINI_VIDEO		= {};
-
+var MINI_SCREENSHARE	= false;
 
 
 $(document).bind('ofmeet.media.obtained', function ()
@@ -1117,7 +1117,7 @@ function createMini(domain, user, password) {
 					'<div class="jm_roster">' + 
 						'<div class="jm_actions">' + 
 							'<a href="javascript:disconnectMini();" style="color:white;">Inspired Social</a>' + 
-							'<a class="jm_one-action jm_join jm_images" title="' + _e("Join a chat") + '" href="#"></a>' + 
+							'<a class="jm_one-action jm_join jm_images" title="' + _e("Toggle between Video and Application") + '" href="#"></a>' + 
 						'</div>' + 
 						'<div class="jm_buddies"></div>' + 
 					'</div>' + 
@@ -1177,6 +1177,7 @@ function createMini(domain, user, password) {
 	jQuery('#jappix_mini div.jm_actions a.jm_join').click(function() {
 		// Using a try/catch override IE issues
 		try {
+/*		
 			// Create a new prompt
 			openPromptMini(_e("Please enter the group chat address to join."));
 			
@@ -1202,6 +1203,17 @@ function createMini(domain, user, password) {
 					return false;
 				}
 			});
+			
+*/
+
+		  if (MINI_VIDEO.room)
+		  {	
+		  	ofmeet.visible(MINI_VIDEO.visible);
+		  	$('#wordpress').css("display", MINI_VIDEO.visible ? "none" : "");
+		  			  	
+		  	MINI_VIDEO.visible = !MINI_VIDEO.visible		  	
+
+		  }
 		}
 		
 		catch(e) {}
@@ -1684,7 +1696,7 @@ function chatMini(type, xid, nick, hash, pwd, show_pane)
 			html += '<a class="jm_one-action jm_close jm_images" title="' + _e("Close") + '" href="#"></a>';
 
 		var webrtcHtml = '<td></td>';
-		if (ofmeet.enabled) webrtcHtml = '<td><a title="Add audio to conversation" href="#"><img style="width:24px;" onclick="changeAudioImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/audio_on.png"/></a></td><td><a title="Add video to conversation" href="#"><img style="width:24px;" onclick="changeVideoImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/video_on.png"/></a></td>';
+		if (ofmeet.enabled) webrtcHtml = '<td><a title="Add audio to conversation" href="#"><img style="width:24px;" onclick="changeAudioImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/audio_on.png"/></a></td><td><a title="Add video to conversation" href="#"><img style="width:24px;" onclick="changeVideoImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/video_on.png"/></a></td><td><a title="Share desktop application to conversation" href="#"><img style="width:24px;" onclick="changeShareImage(this, &quot;' + xid + '&quot;,&quot;' + type + '&quot;)" src="chat/img/others/share_on.png"/></a></td>';
 		
 		html += '</div>' + 
 			
@@ -1760,6 +1772,16 @@ function changeVideoImage(img, xid, type)
 function changeAudioImage(img, xid, type)
 {
 	changeImage(img, xid, type, "audio")
+}
+
+function changeShareImage(img, xid, type)
+{
+	ofmeet.toggleScreenSharing();
+	
+	MINI_SCREENSHARE = !MINI_SCREENSHARE;
+	
+	var image = MINI_SCREENSHARE ? "off" : "on";
+	img.src = "chat/img/others/share_" + image + ".png";
 }
 
 function changeImage(img, xid, type, image)

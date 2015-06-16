@@ -29237,7 +29237,7 @@ var ofmeet = (function(of)
 	    //window.setTimeout(
 	    //    function () {
 	    switchInProgress = false;
-	    Toolbar.changeDesktopSharingButtonState(isUsingScreenStream);
+	    //Toolbar.changeDesktopSharingButtonState(isUsingScreenStream);
 	    //    }, 100
 	    //);
 	}
@@ -29551,12 +29551,12 @@ var ofmeet = (function(of)
 				    if (sharedKey)
 				    {
 					//console.log('set room password');
-					Toolbar.lockLockButton();
+					//Toolbar.lockLockButton();
 				    }
 				    else
 				    {
 					//console.log('removed room password');
-					Toolbar.unlockLockButton();
+					//Toolbar.unlockLockButton();
 				    }
 				},
 				function (err) {
@@ -33490,6 +33490,11 @@ var ofmeet = (function(of)
 		connection.rayo.rayo.hang_up();
 	}
 
+	of.isScreenSharing = function isScreenSharing() 
+	{
+		return isUsingScreenStream;
+	}
+	
 	of.toggleScreenSharing = function toggleScreenSharing() 
 	{
 	    if (switchInProgress || !obtainDesktopStream) {
