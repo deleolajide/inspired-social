@@ -22253,7 +22253,7 @@ var ofmeet = (function(of)
 		//console.log("reconnect start");
 
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", of.server + "/ofmeet/config", true);
+		xhr.open("GET", of.server + "/inspired/config", true);
 
 		xhr.onload = (function() {
 			//console.log("reconnect onload");
@@ -33470,7 +33470,7 @@ var ofmeet = (function(of)
 				    link.id   = cssId;
 				    link.rel  = 'stylesheet';
 				    link.type = 'text/css';
-				    link.href = of.server + '/ofmeet/api/ofmeet.css';
+				    link.href = of.server + '/inspired/chat/css/ofmeet.css';
 				    link.media = 'all';
 				    head.appendChild(link);
 				}
